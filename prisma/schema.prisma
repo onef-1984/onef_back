@@ -23,7 +23,7 @@ model Book {
   id         String   @id @default(uuid())
   title      String
   author     String
-  coverImage String
+  coverImage String?
   page       Int
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
@@ -40,7 +40,7 @@ model Report {
   updatedAt DateTime @updatedAt
   // 연결
   userId    String
-  user      User     @relation(fields: [userId], references: [id], name: "User_BookReport")
+  user      User     @relation(fields: [userId], references: [id], name: "User_BookReport", onDelete: Cascade)
   bookId    String?
-  Book      Book?    @relation(fields: [bookId], references: [id])
+  book      Book?    @relation(fields: [bookId], references: [id])
 }

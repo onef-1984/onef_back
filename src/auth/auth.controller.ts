@@ -1,7 +1,8 @@
-import { Body, Controller, Post, Res } from '@nestjs/common';
+import { Body, Controller, Delete, Post, Res, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { SignInDto, SignUpDto } from './auth.dto';
 import { Response } from 'express';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('auth')
 export class AuthController {
@@ -26,6 +27,15 @@ export class AuthController {
     res
       .cookie('accessToken', accessToken, { httpOnly: true })
       .cookie('refreshToken', refreshToken, { httpOnly: true })
-      .send('회원가입 성공');
+      .send('로그인 성공');
+  }
+
+  @Delete('signout')
+  @UseGuards(AuthGuard())
+  async signOut(@Res() res: Response) {
+    res
+      .clearCookie('accessToken')
+      .clearCookie('refreshToken')
+      .send('로그아웃 성공');
   }
 }

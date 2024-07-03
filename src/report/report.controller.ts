@@ -1,12 +1,21 @@
-import { Body, Controller, Post, Req, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { CreateReportDto } from './report.dto';
 import { User } from '@prisma/client';
 import { Request } from 'express';
 import { AuthGuard } from '@nestjs/passport';
+import { ReportService } from './report.service';
 
 @Controller('report')
 export class ReportController {
-  constructor() {}
+  constructor(private reportService: ReportService) {}
 
   @Post()
   @UseGuards(AuthGuard())
@@ -14,8 +23,18 @@ export class ReportController {
     @Body() createReportDto: CreateReportDto,
     @Req() req: Request,
   ) {
-    const { email, id } = req.user as User;
+    const { email } = req.user as User;
 
-    return { email, id, ...createReportDto };
+    const newReport = await this.reportService.createReport(
+      createReportDto,
+      email,
+    );
+
+    return newReport;
+  }
+
+  @Get(':reportId')
+  async getReport(@Param('reportId') reportId: string) {
+    return this.reportService.getReport(reportId);
   }
 }

@@ -13,7 +13,6 @@ export class CreateBookDto {
   @IsString()
   coverImage: string;
 
-  @IsOptional()
   @IsNumber()
   page: number;
 }
