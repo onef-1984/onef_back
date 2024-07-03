@@ -1,19 +1,21 @@
-import { Body, Controller, Req } from '@nestjs/common';
+import { Body, Controller, Post, Req, UseGuards } from '@nestjs/common';
 import { CreateReportDto } from './report.dto';
 import { User } from '@prisma/client';
 import { Request } from 'express';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('report')
 export class ReportController {
   constructor() {}
 
-  // 가드로 유저 확인하기
+  @Post()
+  @UseGuards(AuthGuard())
   async createReport(
     @Body() createReportDto: CreateReportDto,
     @Req() req: Request,
   ) {
-    const user: User = req['user'];
+    const { email, id } = req.user as User;
 
-    return user;
+    return { email, id, ...createReportDto };
   }
 }
