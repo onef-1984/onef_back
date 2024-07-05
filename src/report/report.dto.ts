@@ -1,4 +1,10 @@
-import { IsNotEmpty, IsOptional, IsString, IsUUID } from 'class-validator';
+import {
+  IsEnum,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  IsUUID,
+} from 'class-validator';
 
 export class CreateReportDto {
   @IsNotEmpty()
@@ -15,4 +21,8 @@ export class CreateReportDto {
 
   @IsOptional()
   tags: string[];
+
+  @IsNotEmpty()
+  @IsEnum(['SHORT', 'MIDDLE', 'LONG'])
+  reportType: 'SHORT' | 'MIDDLE' | 'LONG';
 }

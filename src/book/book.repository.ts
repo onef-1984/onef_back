@@ -14,7 +14,7 @@ export class BookRepository {
 
   async findBookById(bookId: string) {
     return this.prisma.book.findUnique({
-      where: { id: bookId },
+      where: { isbn: bookId },
     });
   }
 }

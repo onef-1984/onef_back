@@ -14,7 +14,7 @@ export class ReportRepository {
         ...data,
         book: {
           connect: {
-            id: bookId,
+            isbn: bookId,
           },
         },
         user: {
@@ -28,7 +28,7 @@ export class ReportRepository {
     return newReport;
   }
 
-  async getReport(reportId: string) {
+  async findReportById(reportId: string) {
     return this.prisma.report.findUnique({
       where: {
         id: reportId,
@@ -46,12 +46,20 @@ export class ReportRepository {
         },
         book: {
           select: {
-            id: true,
+            isbn: true,
             title: true,
             author: true,
             page: true,
           },
         },
+      },
+    });
+  }
+
+  async deleteReport(reportId: string) {
+    return this.prisma.report.delete({
+      where: {
+        id: reportId,
       },
     });
   }

@@ -1,6 +1,8 @@
 import {
   Body,
   Controller,
+  Delete,
+  ForbiddenException,
   Get,
   Param,
   Post,
@@ -36,5 +38,19 @@ export class ReportController {
   @Get(':reportId')
   async getReport(@Param('reportId') reportId: string) {
     return this.reportService.getReport(reportId);
+  }
+
+  @Delete(':reportId')
+  @UseGuards(AuthGuard())
+  async deleteReport(@Param('reportId') reportId: string, @Req() req: Request) {
+    const { email } = req.user as User;
+
+    const isOwner = await this.reportService.checkIsOwner(reportId, email);
+
+    if (!isOwner) {
+      throw new ForbiddenException('권한이 없습니다.');
+    } else {
+      return this.reportService.deleteReport(reportId);
+    }
   }
 }

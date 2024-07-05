@@ -6,6 +6,7 @@ import { UserModule } from './user/user.module';
 import { ConfigModule } from '@nestjs/config';
 import { jwtConfig } from './config/jwt.config';
 import { BookModule } from './book/book.module';
+import { AladinModule } from './aladin/aladin.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { BookModule } from './book/book.module';
       load: [jwtConfig],
     }),
     BookModule,
+    AladinModule,
   ],
 })
 export class AppModule {}

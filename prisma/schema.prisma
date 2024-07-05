@@ -20,27 +20,38 @@ model User {
 }
 
 model Book {
-  id         String   @id @default(uuid())
-  title      String
-  author     String
-  coverImage String?
-  page       Int
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  isbn          String   @unique
+  title         String
+  author        String
+  description   String?
+  cover         String?
+  page          Int
+  pubDate       String
+  publisher     String
+  priceStandard Int
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
   // 연결
-  Report     Report[]
+  Report        Report[]
 }
 
 model Report {
-  id        String   @id @default(uuid())
-  title     String
-  content   String
-  tags      String[] @default([])
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id         String     @id @default(uuid())
+  title      String
+  content    String
+  tags       String[]   @default([])
+  reportType ReportType
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
   // 연결
-  userId    String
-  user      User     @relation(fields: [userId], references: [id], name: "User_BookReport", onDelete: Cascade)
-  bookId    String?
-  book      Book?    @relation(fields: [bookId], references: [id])
+  userId     String
+  user       User       @relation(fields: [userId], references: [id], name: "User_BookReport", onDelete: Cascade)
+  bookIsbn   String?
+  book       Book?      @relation(fields: [bookIsbn], references: [isbn], onDelete: SetNull)
+}
+
+enum ReportType {
+  SHORT
+  MIDDLE
+  LONG
 }

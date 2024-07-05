@@ -3,6 +3,10 @@ import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
 export class CreateBookDto {
   @IsNotEmpty()
   @IsString()
+  isbn: string;
+
+  @IsNotEmpty()
+  @IsString()
   title: string;
 
   @IsNotEmpty()
@@ -11,8 +15,25 @@ export class CreateBookDto {
 
   @IsOptional()
   @IsString()
-  coverImage: string;
+  description: string;
 
+  @IsOptional()
+  @IsString()
+  cover: string;
+
+  @IsNotEmpty()
   @IsNumber()
   page: number;
+
+  @IsNotEmpty()
+  @IsString()
+  pubDate: string;
+
+  @IsNotEmpty()
+  @IsString()
+  publisher: string;
+
+  @IsNotEmpty()
+  @IsNumber()
+  priceStandard: number;
 }
