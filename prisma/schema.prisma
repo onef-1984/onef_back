@@ -46,8 +46,8 @@ model Report {
   // 연결
   userId     String
   user       User       @relation(fields: [userId], references: [id], name: "User_BookReport", onDelete: Cascade)
-  bookIsbn   String?
-  book       Book?      @relation(fields: [bookIsbn], references: [isbn], onDelete: SetNull)
+  isbn       String?
+  book       Book?      @relation(fields: [isbn], references: [isbn], onDelete: SetNull)
 }
 
 enum ReportType {

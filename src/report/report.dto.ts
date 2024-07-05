@@ -1,14 +1,14 @@
 import {
   IsEnum,
+  IsISBN,
   IsNotEmpty,
   IsOptional,
   IsString,
-  IsUUID,
 } from 'class-validator';
 
 export class CreateReportDto {
   @IsNotEmpty()
-  @IsUUID()
+  @IsISBN()
   bookId: string;
 
   @IsNotEmpty()
