@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ReportRepository } from './report.repository';
-import { CreateReportDto } from './report.dto';
+import { CreateReportDto, UpdateReportDto } from './report.dto';
 
 @Injectable()
 export class ReportService {
@@ -23,5 +23,9 @@ export class ReportService {
 
   async deleteReport(reportId: string) {
     return this.reportRepository.deleteReport(reportId);
+  }
+
+  async updateReport(updateReportDto: UpdateReportDto, reportId: string) {
+    return this.reportRepository.updateReport(updateReportDto, reportId);
   }
 }

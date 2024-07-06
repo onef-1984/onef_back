@@ -17,6 +17,13 @@ export class UserController {
     return { id, email, nickname };
   }
 
+  @Get('reports')
+  @UseGuards(AuthGuard())
+  async getReports(@Req() req: Request) {
+    const { id } = req.user as User;
+    return this.userService.getUserReports(id);
+  }
+
   @Patch('nickname')
   @UseGuards(AuthGuard())
   async changeNickname(

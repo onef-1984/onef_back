@@ -31,6 +31,7 @@ export class AladinService {
       cover,
       subInfo,
       pubDate,
+      categoryName,
       publisher,
       priceStandard,
       isbn13,
@@ -41,11 +42,12 @@ export class AladinService {
       author,
       description,
       cover,
-      itemPage: subInfo.itemPage,
+      page: subInfo.itemPage,
+      category: categoryName,
       pubDate,
       publisher,
       priceStandard,
-      isbn13,
+      isbn: isbn13,
     };
   }
 }

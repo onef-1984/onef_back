@@ -28,6 +28,17 @@ export class AuthService {
     });
   }
 
+  async refresh(refresh: string) {
+    const { email, nickname } = this.jwtService.verify(refresh, {
+      secret: this.jwt.refreshSecret,
+    });
+
+    const accessToken = this.generateAccessToken({ email, nickname });
+    const refreshToken = this.generateRefreshToken({ email, nickname });
+
+    return { accessToken, refreshToken };
+  }
+
   async signup(signUpDto: SignUpDto) {
     const { password } = signUpDto;
 

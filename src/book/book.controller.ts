@@ -12,7 +12,6 @@ export class BookController {
 
   @Get(':bookId')
   findBookById(@Param('bookId') bookId: string) {
-    console.log('bookId', bookId);
     return this.bookService.findBookById(bookId);
   }
 }

@@ -14,4 +14,8 @@ export class UserService {
 
     return newUser;
   }
+
+  async getUserReports(userId: string) {
+    return this.userRepository.getUserReports(userId);
+  }
 }

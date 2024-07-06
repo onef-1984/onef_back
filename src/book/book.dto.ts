@@ -27,6 +27,10 @@ export class CreateBookDto {
 
   @IsNotEmpty()
   @IsString()
+  category: string;
+
+  @IsNotEmpty()
+  @IsString()
   pubDate: string;
 
   @IsNotEmpty()

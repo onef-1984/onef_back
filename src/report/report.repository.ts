@@ -1,20 +1,20 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { CreateReportDto } from './report.dto';
+import { CreateReportDto, UpdateReportDto } from './report.dto';
 
 @Injectable()
 export class ReportRepository {
   constructor(private prisma: PrismaService) {}
 
   async createReport(createReportDto: CreateReportDto, email: string) {
-    const { bookId, ...data } = createReportDto;
+    const { isbn, ...data } = createReportDto;
 
     const newReport = await this.prisma.report.create({
       data: {
         ...data,
         book: {
           connect: {
-            isbn: bookId,
+            isbn,
           },
         },
         user: {
@@ -37,22 +37,24 @@ export class ReportRepository {
         id: true,
         title: true,
         content: true,
+        reportType: true,
         tags: true,
+        book: true,
         user: {
           select: {
             id: true,
             email: true,
-          },
-        },
-        book: {
-          select: {
-            isbn: true,
-            title: true,
-            author: true,
-            page: true,
+            nickname: true,
           },
         },
       },
+    });
+  }
+
+  async updateReport(updateReportDto: UpdateReportDto, reportId: string) {
+    return this.prisma.report.update({
+      where: { id: reportId },
+      data: { ...updateReportDto },
     });
   }
 

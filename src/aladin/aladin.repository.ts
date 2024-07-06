@@ -5,7 +5,7 @@ import { AladinBookListDto, IsbnDto } from './aladin.dto';
 export class AladinRepository {
   async getBookListByKeyWord({ keyword, skip, take }: AladinBookListDto) {
     const result = await fetch(
-      `http://www.aladin.co.kr/ttb/api/ItemSearch.aspx?ttbkey=ttbwpfekdml1340001&Query=${keyword}&QueryType=Title&MaxResults=${take}&start=${skip}&SearchTarget=Book&cover=big&output=js&Version=20131101`,
+      `http://www.aladin.co.kr/ttb/api/ItemSearch.aspx?ttbkey=ttbwpfekdml1340001&Query=${keyword}&QueryType=Keyword&MaxResults=${take}&start=${skip}&SearchTarget=Book&cover=big&output=js&Version=20131101`,
     );
 
     const data = await result.json();

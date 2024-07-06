@@ -16,7 +16,7 @@ model User {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
   // 연결
-  Report       Report[] @relation("User_BookReport")
+  report       Report[] @relation("User_BookReport")
 }
 
 model Book {
@@ -28,11 +28,12 @@ model Book {
   page          Int
   pubDate       String
   publisher     String
+  category      String
   priceStandard Int
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
   // 연결
-  Report        Report[]
+  report        Report[]
 }
 
 model Report {

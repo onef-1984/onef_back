@@ -5,11 +5,12 @@ import {
   ForbiddenException,
   Get,
   Param,
+  Patch,
   Post,
   Req,
   UseGuards,
 } from '@nestjs/common';
-import { CreateReportDto } from './report.dto';
+import { CreateReportDto, UpdateReportDto } from './report.dto';
 import { User } from '@prisma/client';
 import { Request } from 'express';
 import { AuthGuard } from '@nestjs/passport';
@@ -38,6 +39,15 @@ export class ReportController {
   @Get(':reportId')
   async getReport(@Param('reportId') reportId: string) {
     return this.reportService.getReport(reportId);
+  }
+
+  @Patch(':reportId')
+  @UseGuards(AuthGuard())
+  async updateReport(
+    @Body() updateReportDto: UpdateReportDto,
+    @Param('reportId') reportId: string,
+  ) {
+    return this.reportService.updateReport(updateReportDto, reportId);
   }
 
   @Delete(':reportId')

@@ -15,4 +15,24 @@ export class UserRepository {
 
     return newUser;
   }
+
+  async getUserReports(userId: string) {
+    const reports = await this.prisma.user.findUnique({
+      where: { id: userId },
+      select: {
+        report: {
+          select: {
+            id: true,
+            title: true,
+            content: true,
+            reportType: true,
+            tags: true,
+            book: true,
+          },
+        },
+      },
+    });
+
+    return reports;
+  }
 }
