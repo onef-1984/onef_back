@@ -26,7 +26,7 @@ export class AuthController {
       res
         .cookie('accessToken', accessToken, { httpOnly: true })
         .cookie('refreshToken', refreshToken, { httpOnly: true })
-        .send('토큰 재발급 성공');
+        .send({ message: '토큰 재발급 성공' });
     } else {
       throw new UnauthorizedException('토근이 만료되었습니다.');
     }
@@ -38,9 +38,18 @@ export class AuthController {
       await this.authService.signup(signUpDto);
 
     res
-      .cookie('accessToken', accessToken, { httpOnly: true })
-      .cookie('refreshToken', refreshToken, { httpOnly: true })
-      .send('회원가입 성공');
+      .cookie('accessToken', accessToken, {
+        httpOnly: true,
+        secure: true,
+        sameSite: 'none',
+      })
+      .cookie('refreshToken', refreshToken, {
+        httpOnly: true,
+        secure: true,
+        sameSite: 'none',
+      })
+      .status(201)
+      .send({ message: '회원가입 성공' });
   }
 
   @Post('signin')
@@ -49,9 +58,17 @@ export class AuthController {
       await this.authService.signIn(signInDto);
 
     res
-      .cookie('accessToken', accessToken, { httpOnly: true })
-      .cookie('refreshToken', refreshToken, { httpOnly: true })
-      .send('로그인 성공');
+      .cookie('accessToken', accessToken, {
+        httpOnly: true,
+        secure: true,
+        sameSite: 'none',
+      })
+      .cookie('refreshToken', refreshToken, {
+        httpOnly: true,
+        secure: true,
+        sameSite: 'none',
+      })
+      .send({ message: '로그인 성공' });
   }
 
   @Delete('signout')
@@ -60,6 +77,6 @@ export class AuthController {
     res
       .clearCookie('accessToken')
       .clearCookie('refreshToken')
-      .send('로그아웃 성공');
+      .send({ message: '로그아웃 성공' });
   }
 }
