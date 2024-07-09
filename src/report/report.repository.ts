@@ -33,12 +33,7 @@ export class ReportRepository {
       where: {
         id: reportId,
       },
-      select: {
-        id: true,
-        title: true,
-        content: true,
-        reportType: true,
-        tags: true,
+      include: {
         book: true,
         user: {
           select: {
