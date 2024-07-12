@@ -7,6 +7,7 @@ import { ConfigModule } from '@nestjs/config';
 import { jwtConfig } from './config/jwt.config';
 import { BookModule } from './book/book.module';
 import { AladinModule } from './aladin/aladin.module';
+import { AppController } from './app.controller';
 
 @Module({
   imports: [
@@ -15,12 +16,13 @@ import { AladinModule } from './aladin/aladin.module';
     ReportModule,
     UserModule,
     ConfigModule.forRoot({
-      envFilePath: [`${__dirname}/.env`],
+      envFilePath: '.env',
       isGlobal: true,
       load: [jwtConfig],
     }),
     BookModule,
     AladinModule,
   ],
+  controllers: [AppController],
 })
 export class AppModule {}
