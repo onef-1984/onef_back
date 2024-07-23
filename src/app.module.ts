@@ -8,6 +8,7 @@ import { jwtConfig } from './config/jwt.config';
 import { BookModule } from './book/book.module';
 import { AladinModule } from './aladin/aladin.module';
 import { AppController } from './app.controller';
+import { UtilModule } from './util/util.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { AppController } from './app.controller';
     }),
     BookModule,
     AladinModule,
+    UtilModule,
   ],
   controllers: [AppController],
 })

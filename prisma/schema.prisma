@@ -1,5 +1,6 @@
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["omitApi"]
 }
 
 datasource db {
@@ -17,42 +18,58 @@ model User {
   updatedAt    DateTime @updatedAt
   // 연결
   report       Report[] @relation("User_BookReport")
+  notify       Notify?  @relation("notification")
 }
 
-model Book {
-  isbn          String   @unique
-  title         String
-  author        String
-  description   String?
-  cover         String?
-  page          Int
-  pubDate       String
-  publisher     String
-  category      String
-  priceStandard Int
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+model Notify {
+  id     String @id @default(uuid())
   // 연결
-  report        Report[]
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], name: "notification")
 }
 
 model Report {
-  id         String     @id @default(uuid())
-  title      String
-  content    String
-  tags       String[]   @default([])
-  reportType ReportType
-  createdAt  DateTime   @default(now())
-  updatedAt  DateTime   @updatedAt
+  id        String   @id @default(uuid())
+  title     String
+  content   String
+  tags      String[] @default([])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
   // 연결
-  userId     String
-  user       User       @relation(fields: [userId], references: [id], name: "User_BookReport", onDelete: Cascade)
-  isbn       String?
-  book       Book?      @relation(fields: [isbn], references: [isbn], onDelete: SetNull)
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], name: "User_BookReport", onDelete: Cascade)
+  isbn13    String?
+  book      Book?    @relation(fields: [isbn13], references: [isbn13], onDelete: SetNull)
 }
 
-enum ReportType {
-  SHORT
-  MIDDLE
-  LONG
+model Book {
+  isbn13             String   @unique
+  title              String
+  author             String
+  description        String?
+  cover              String?
+  pubDate            String
+  publisher          String
+  categoryId         Int
+  categoryName       String
+  priceStandard      Int
+  customerReviewRank Int
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+  // 연결
+  report             Report[]
+  subInfoId          String
+  subInfo            SubInfo  @relation(fields: [subInfoId], references: [id])
+}
+
+model SubInfo {
+  id            String  @id @default(uuid())
+  subTitle      String?
+  originalTitle String?
+  itemPage      Int?
+  weight        Int?
+  sizeDepth     Int?
+  sizeHeight    Int?
+  sizeWidth     Int?
+  Book          Book[]
 }

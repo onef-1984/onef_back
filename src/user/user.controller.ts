@@ -12,9 +12,9 @@ export class UserController {
   @Get('me')
   @UseGuards(AuthGuard())
   async getMe(@Req() req: Request) {
-    const { id, email, nickname } = req.user as User;
+    const { id, email, nickname, profileImage } = req.user as User;
 
-    return { id, email, nickname };
+    return { id, email, nickname, profileImage };
   }
 
   @Get('reports')

@@ -1,16 +1,10 @@
 import { OmitType, PartialType } from '@nestjs/mapped-types';
-import {
-  IsEnum,
-  IsISBN,
-  IsNotEmpty,
-  IsOptional,
-  IsString,
-} from 'class-validator';
+import { IsISBN, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class CreateReportDto {
   @IsNotEmpty()
   @IsISBN()
-  isbn: string;
+  isbn13: string;
 
   @IsNotEmpty()
   @IsString()
@@ -22,12 +16,8 @@ export class CreateReportDto {
 
   @IsOptional()
   tags: string[];
-
-  @IsNotEmpty()
-  @IsEnum(['SHORT', 'MIDDLE', 'LONG'])
-  reportType: 'SHORT' | 'MIDDLE' | 'LONG';
 }
 
 export class UpdateReportDto extends OmitType(PartialType(CreateReportDto), [
-  'isbn',
+  'isbn13',
 ] as const) {}
