@@ -2,6 +2,19 @@ import { Injectable } from '@nestjs/common';
 import { AladinRepository } from './aladin.repository';
 import { AladinBookListDto, IsbnDto } from './aladin.dto';
 
+const omit: <T extends Record<string, any>, K extends Array<keyof T>>(
+  obj: T,
+  keys: K,
+) => T = (obj, keys) => {
+  for (const key of keys) {
+    delete obj[key];
+  }
+
+  return obj;
+};
+
+export default omit;
+
 @Injectable()
 export class AladinService {
   constructor(private aladinRepository: AladinRepository) {}
@@ -82,7 +95,12 @@ export class AladinService {
       publisher,
       priceStandard,
       customerReviewRank,
-      subInfo: { subTitle, originalTitle, itemPage, ...packing },
+      subInfo: {
+        subTitle,
+        originalTitle,
+        itemPage,
+        ...omit(packing, ['styleDesc']),
+      },
     };
   }
 }

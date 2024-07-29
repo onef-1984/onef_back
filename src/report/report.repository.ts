@@ -1,14 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateReportDto, UpdateReportDto } from './report.dto';
-import { UtilFunction } from 'src/util/util.resOption';
 
 @Injectable()
 export class ReportRepository {
-  constructor(
-    private prisma: PrismaService,
-    private util: UtilFunction,
-  ) {}
+  constructor(private prisma: PrismaService) {}
 
   async createReport(createReportDto: CreateReportDto, email: string) {
     const { isbn13, ...data } = createReportDto;
@@ -27,7 +23,7 @@ export class ReportRepository {
           },
         },
       },
-      ...this.util.reportResOption(),
+      select: { id: true },
     });
 
     return newReport;
@@ -38,7 +34,16 @@ export class ReportRepository {
       where: {
         id: reportId,
       },
-      ...this.util.reportResOption(),
+      include: {
+        book: {
+          include: { subInfo: true },
+          omit: { subInfoId: true, createdAt: true, updatedAt: true },
+        },
+        user: {
+          omit: { password: true, createdAt: true, updatedAt: true },
+        },
+      },
+      omit: { isbn13: true, userId: true },
     });
   }
 
