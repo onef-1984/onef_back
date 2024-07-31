@@ -28,7 +28,23 @@ export class AuthService {
     });
   }
 
-  async refresh(refresh: string) {
+  accessVerify(access: string) {
+    const { email, nickname } = this.jwtService.verify(access, {
+      secret: this.jwt.accessSecret,
+    });
+
+    return { email, nickname };
+  }
+
+  refreshVerify(refresh: string) {
+    const { email, nickname } = this.jwtService.verify(refresh, {
+      secret: this.jwt.refreshSecret,
+    });
+
+    return { email, nickname };
+  }
+
+  refresh(refresh: string) {
     const { email, nickname } = this.jwtService.verify(refresh, {
       secret: this.jwt.refreshSecret,
     });

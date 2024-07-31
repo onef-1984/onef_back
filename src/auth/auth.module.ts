@@ -13,6 +13,6 @@ import { PassportModule } from '@nestjs/passport';
     JwtModule.register({}),
     PassportModule.register({ defaultStrategy: 'jwt' }),
   ],
-  exports: [JwtStrategy, PassportModule],
+  exports: [AuthService, JwtStrategy, PassportModule],
 })
 export class AuthModule {}

@@ -6,7 +6,7 @@ export const jwtConfig = registerAs('jwt', () => ({
   refreshSecret: process.env.JWT_REFRESH_SECRET,
 }));
 
-export const jwtConfigSchema = Joi.object({
+export const validationSchema = Joi.object({
   JWT_ACCESS_SECRET: Joi.string().required(),
   JWT_REFRESH_SECRET: Joi.string().required(),
 });
