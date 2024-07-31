@@ -29,6 +29,12 @@ export class ReportRepository {
     return newReport;
   }
 
+  async getReportList() {
+    await this.prisma.report.findMany({
+      where: {},
+    });
+  }
+
   async findReportById(reportId: string) {
     return this.prisma.report.findUnique({
       where: {
@@ -36,11 +42,11 @@ export class ReportRepository {
       },
       include: {
         book: {
-          include: { subInfo: true },
+          include: { subInfo: { select: { itemPage: true } } },
           omit: { subInfoId: true, createdAt: true, updatedAt: true },
         },
         user: {
-          omit: { password: true, createdAt: true, updatedAt: true },
+          select: { id: true, nickname: true },
         },
       },
       omit: { isbn13: true, userId: true },

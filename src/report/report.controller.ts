@@ -5,8 +5,8 @@ import {
   ForbiddenException,
   Get,
   Param,
-  Patch,
   Post,
+  Put,
   Req,
   UseGuards,
 } from '@nestjs/common';
@@ -41,7 +41,7 @@ export class ReportController {
     return this.reportService.getReport(reportId);
   }
 
-  @Patch(':reportId')
+  @Put(':reportId')
   @UseGuards(AuthGuard())
   async updateReport(
     @Body() updateReportDto: UpdateReportDto,
@@ -53,9 +53,9 @@ export class ReportController {
   @Delete(':reportId')
   @UseGuards(AuthGuard())
   async deleteReport(@Param('reportId') reportId: string, @Req() req: Request) {
-    const { email } = req.user as User;
+    const { id } = req.user as User;
 
-    const isOwner = await this.reportService.checkIsOwner(reportId, email);
+    const isOwner = await this.reportService.checkIsOwner(reportId, id);
 
     if (!isOwner) {
       throw new ForbiddenException('권한이 없습니다.');

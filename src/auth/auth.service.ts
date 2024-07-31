@@ -41,7 +41,6 @@ export class AuthService {
 
   async signup(signUpDto: SignUpDto) {
     const { password, email } = signUpDto;
-
     const user = await this.authRepository.findUserByEmail(email);
 
     if (user) throw new BadRequestException('이미 존재하는 이메일입니다');

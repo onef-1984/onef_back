@@ -1,4 +1,4 @@
-import { OmitType, PartialType } from '@nestjs/mapped-types';
+import { OmitType } from '@nestjs/mapped-types';
 import { IsISBN, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class CreateReportDto {
@@ -18,6 +18,6 @@ export class CreateReportDto {
   tags: string[];
 }
 
-export class UpdateReportDto extends OmitType(PartialType(CreateReportDto), [
+export class UpdateReportDto extends OmitType(CreateReportDto, [
   'isbn13',
 ] as const) {}

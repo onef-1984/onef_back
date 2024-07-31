@@ -18,10 +18,10 @@ export class ReportService {
     return report;
   }
 
-  async checkIsOwner(reportId: string, userEmail: string) {
+  async checkIsOwner(reportId: string, userId: string) {
     const targetReport = await this.reportRepository.findReportById(reportId);
 
-    if (targetReport.user.email !== userEmail) return false;
+    if (targetReport.user.id !== userId) return false;
     else return true;
   }
 

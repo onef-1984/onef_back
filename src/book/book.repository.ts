@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateBookDto, SubInfo } from './book.dto';
+import { IsbnDto } from 'src/aladin/aladin.dto';
 
 @Injectable()
 export class BookRepository {

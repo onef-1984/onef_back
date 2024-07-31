@@ -5,7 +5,7 @@ import { BookController } from './book.controller';
 
 @Module({
   providers: [BookService, BookRepository],
-  exports: [BookService],
+  exports: [BookService, BookRepository],
   controllers: [BookController],
 })
 export class BookModule {}

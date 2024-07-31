@@ -10,6 +10,7 @@ datasource db {
 
 model User {
   id           String   @id @default(uuid())
+  role         Role     @default(USER)
   email        String   @unique
   password     String
   nickname     String   @unique
@@ -18,7 +19,13 @@ model User {
   updatedAt    DateTime @updatedAt
   // 연결
   report       Report[] @relation("User_BookReport")
+  reportLike   Report[] @relation("User_BookReportLike")
   notify       Notify?  @relation("notification")
+}
+
+enum Role {
+  USER
+  ADMIN
 }
 
 model Notify {
@@ -29,17 +36,19 @@ model Notify {
 }
 
 model Report {
-  id        String   @id @default(uuid())
-  title     String
-  content   String
-  tags      String[] @default([])
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id            String   @id @default(uuid())
+  title         String
+  content       String
+  tags          String[] @default([])
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  favoriteCount Int      @default(0)
   // 연결
-  userId    String
-  user      User     @relation(fields: [userId], references: [id], name: "User_BookReport", onDelete: Cascade)
-  isbn13    String?
-  book      Book?    @relation(fields: [isbn13], references: [isbn13], onDelete: SetNull)
+  userId        String
+  user          User     @relation(fields: [userId], references: [id], name: "User_BookReport", onDelete: Cascade)
+  userLiked     User[]   @relation("User_BookReportLike")
+  isbn13        String?
+  book          Book?    @relation(fields: [isbn13], references: [isbn13], onDelete: SetNull)
 }
 
 model Book {

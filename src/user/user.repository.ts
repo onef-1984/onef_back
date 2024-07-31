@@ -21,16 +21,17 @@ export class UserRepository {
       where: { id: userId },
       select: {
         report: {
+          orderBy: { createdAt: 'desc' },
           include: {
             book: {
-              include: { subInfo: { omit: { id: true } } },
-              omit: { createdAt: true, updatedAt: true, subInfoId: true },
-            },
-            user: {
-              omit: { password: true, createdAt: true, updatedAt: true },
+              select: {
+                title: true,
+                author: true,
+                description: true,
+              },
             },
           },
-          omit: { isbn13: true, userId: true },
+          omit: { isbn13: true, userId: true, createdAt: true, content: true },
         },
       },
     });
