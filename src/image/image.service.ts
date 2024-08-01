@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { ImageRepository } from './image.repository';
 
 @Injectable()
@@ -19,12 +19,6 @@ export class ImageService {
   }
 
   async getImage(fileName: string) {
-    const data = await this.imageRepository.getImageFromS3(fileName);
-
-    if (!data.ok) {
-      throw new NotFoundException(`Error fetching image: ${data.statusText}`);
-    }
-
-    return data;
+    return await this.imageRepository.getImageFromS3(fileName);
   }
 }

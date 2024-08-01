@@ -1,6 +1,7 @@
 import {
   Controller,
   Get,
+  NotFoundException,
   Param,
   Post,
   Res,
@@ -10,6 +11,7 @@ import {
 import { ImageService } from './image.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Response } from 'express';
+import { Readable } from 'stream';
 
 @Controller('image')
 export class ImageController {
@@ -25,10 +27,12 @@ export class ImageController {
   async getImage(@Param('fileName') fileName: string, @Res() res: Response) {
     const data = await this.imageService.getImage(fileName);
 
-    const arrayBuffer = await data.arrayBuffer();
-    const buffer = Buffer.from(arrayBuffer);
+    if (data.Body instanceof Readable) {
+      res.set('Content-Type', data.ContentType || 'image/jpeg');
 
-    res.set('Content-Type', data.headers.get('Content-Type') || 'image/jpeg');
-    res.send(buffer);
+      data.Body.pipe(res);
+    } else {
+      throw new NotFoundException('image not found');
+    }
   }
 }

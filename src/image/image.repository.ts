@@ -6,7 +6,6 @@ import {
 } from '@aws-sdk/client-s3';
 import { awsConfig } from 'src/config/aws.config';
 import { ConfigType } from '@nestjs/config';
-import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 
 @Injectable()
 export class ImageRepository {
@@ -51,11 +50,8 @@ export class ImageRepository {
       Key: fileName,
     });
 
-    const signedUrl = await getSignedUrl(this.s3Client, command, {
-      expiresIn: 360,
-    });
-    const response = await fetch(signedUrl);
+    const data = await this.s3Client.send(command);
 
-    return response;
+    return data;
   }
 }
