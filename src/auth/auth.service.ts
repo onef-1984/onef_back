@@ -14,43 +14,38 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  generateAccessToken(payload: { email: string; nickname: string }) {
+  generateToken(
+    payload: { email: string; nickname: string; id: string },
+    type: 'access' | 'refresh',
+  ) {
+    const secret =
+      type === 'access' ? this.jwt.accessSecret : this.jwt.refreshSecret;
+    const expiresIn = type === 'access' ? '1h' : '30d';
+
     return this.jwtService.sign(payload, {
-      secret: this.jwt.accessSecret,
-      expiresIn: '1h',
+      secret,
+      expiresIn,
     });
   }
 
-  generateRefreshToken(payload: { email: string; nickname: string }) {
-    return this.jwtService.sign(payload, {
-      secret: this.jwt.refreshSecret,
-      expiresIn: '30d',
-    });
-  }
+  verify(token: string, type: 'access' | 'refresh') {
+    const secret =
+      type === 'access' ? this.jwt.accessSecret : this.jwt.refreshSecret;
 
-  accessVerify(access: string) {
-    const { email, nickname } = this.jwtService.verify(access, {
-      secret: this.jwt.accessSecret,
+    const { email, nickname, id } = this.jwtService.verify(token, {
+      secret,
     });
 
-    return { email, nickname };
-  }
-
-  refreshVerify(refresh: string) {
-    const { email, nickname } = this.jwtService.verify(refresh, {
-      secret: this.jwt.refreshSecret,
-    });
-
-    return { email, nickname };
+    return { email, nickname, id };
   }
 
   refresh(refresh: string) {
-    const { email, nickname } = this.jwtService.verify(refresh, {
+    const { email, nickname, id } = this.jwtService.verify(refresh, {
       secret: this.jwt.refreshSecret,
     });
 
-    const accessToken = this.generateAccessToken({ email, nickname });
-    const refreshToken = this.generateRefreshToken({ email, nickname });
+    const accessToken = this.generateToken({ email, nickname, id }, 'access');
+    const refreshToken = this.generateToken({ email, nickname, id }, 'refresh');
 
     return { accessToken, refreshToken };
   }
@@ -69,19 +64,18 @@ export class AuthService {
       password: hashedPassword,
     });
 
-    const accessToken = this.generateAccessToken(res);
-    const refreshToken = this.generateRefreshToken(res);
+    const accessToken = this.generateToken(res, 'access');
+    const refreshToken = this.generateToken(res, 'refresh');
 
     return { accessToken, refreshToken };
   }
 
   async signIn(signInDto: SignInDto) {
     const user = await this.authRepository.findUserByEmail(signInDto.email);
-    const payload = { email: user.email, nickname: user.nickname };
 
     if (user && (await compare(signInDto.password, user.password))) {
-      const accessToken = this.generateAccessToken(payload);
-      const refreshToken = this.generateRefreshToken(payload);
+      const accessToken = this.generateToken(user, 'access');
+      const refreshToken = this.generateToken(user, 'refresh');
 
       return { accessToken, refreshToken };
     } else if (!user) {

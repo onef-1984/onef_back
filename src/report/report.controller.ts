@@ -13,15 +13,15 @@ import {
 import { CreateReportDto, UpdateReportDto } from './report.dto';
 import { User } from '@prisma/client';
 import { Request } from 'express';
-import { AuthGuard } from '@nestjs/passport';
 import { ReportService } from './report.service';
+import { AuthGuard } from 'src/auth/auth.guard';
 
 @Controller('report')
 export class ReportController {
   constructor(private reportService: ReportService) {}
 
   @Post()
-  @UseGuards(AuthGuard())
+  @UseGuards(AuthGuard)
   async createReport(
     @Body() createReportDto: CreateReportDto,
     @Req() req: Request,
@@ -42,7 +42,7 @@ export class ReportController {
   }
 
   @Put(':reportId')
-  @UseGuards(AuthGuard())
+  @UseGuards(AuthGuard)
   async updateReport(
     @Body() updateReportDto: UpdateReportDto,
     @Param('reportId') reportId: string,
@@ -51,7 +51,7 @@ export class ReportController {
   }
 
   @Delete(':reportId')
-  @UseGuards(AuthGuard())
+  @UseGuards(AuthGuard)
   async deleteReport(@Param('reportId') reportId: string, @Req() req: Request) {
     const { id } = req.user as User;
 

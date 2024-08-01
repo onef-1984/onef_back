@@ -12,7 +12,7 @@ export class RefreshMiddleware implements NestMiddleware {
     if (accessToken) {
       try {
         // accessToken이 유효하지 않으면 에러 발생
-        this.authService.accessVerify(accessToken);
+        this.authService.verify(accessToken, 'access');
       } catch (error) {
         if (refreshToken) {
           try {

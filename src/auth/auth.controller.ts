@@ -2,7 +2,7 @@ import { Body, Controller, Delete, Post, Res, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { SignInDto, SignUpDto } from './auth.dto';
 import { Response } from 'express';
-import { AuthGuard } from '@nestjs/passport';
+import { AuthGuard } from './auth.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -48,7 +48,7 @@ export class AuthController {
   }
 
   @Delete('signout')
-  @UseGuards(AuthGuard())
+  @UseGuards(AuthGuard)
   async signOut(@Res() res: Response) {
     res
       .clearCookie('accessToken')

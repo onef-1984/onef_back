@@ -21,12 +21,12 @@ export class ReportService {
   async checkIsOwner(reportId: string, userId: string) {
     const targetReport = await this.reportRepository.findReportById(reportId);
 
-    if (targetReport.user.id !== userId) return false;
+    if (targetReport?.user.id !== userId) return false;
     else return true;
   }
 
   async deleteReport(reportId: string) {
-    return this.reportRepository.deleteReport(reportId);
+    return await this.reportRepository.deleteReport(reportId);
   }
 
   async updateReport(updateReportDto: UpdateReportDto, reportId: string) {
