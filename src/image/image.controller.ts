@@ -6,21 +6,36 @@ import {
   Post,
   Res,
   UploadedFile,
+  UploadedFiles,
+  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { ImageService } from './image.service';
-import { FileInterceptor } from '@nestjs/platform-express';
+import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { Response } from 'express';
 import { Readable } from 'stream';
+import { AuthGuard } from 'src/auth/auth.guard';
 
 @Controller('image')
 export class ImageController {
   constructor(private imageService: ImageService) {}
 
+  @UseGuards(AuthGuard)
   @UseInterceptors(FileInterceptor('image'))
-  @Post('')
-  async saveImage(@UploadedFile() file: Express.Multer.File) {
-    return await this.imageService.putImage(file);
+  @Post('/single-upload')
+  async putImage(@UploadedFile() file: Express.Multer.File) {
+    const imageUrl = await this.imageService.putImage(file);
+
+    return { imageUrl };
+  }
+
+  @UseGuards(AuthGuard)
+  @UseInterceptors(FilesInterceptor('images'))
+  @Post('/multi-upload')
+  async putImages(@UploadedFiles() files: Express.Multer.File[]) {
+    const imageUrl = await this.imageService.putImages(files);
+
+    return { imageUrl };
   }
 
   @Get(':fileName')

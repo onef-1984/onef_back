@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ImageRepository } from './image.repository';
+import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class ImageService {
@@ -15,7 +16,20 @@ export class ImageService {
       ext,
     );
 
-    return { imageUrl };
+    return imageUrl;
+  }
+
+  async putImages(files: Express.Multer.File[]) {
+    const a = files.map((file) => {
+      const fileName = uuidv4();
+      const ext = file.originalname.split('.').pop();
+
+      return { fileName, file, ext };
+    });
+
+    const imageUrl = await this.imageRepository.putImagesToS3(a);
+
+    return imageUrl;
   }
 
   async getImage(fileName: string) {

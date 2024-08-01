@@ -13,13 +13,14 @@ import { RefreshMiddleware } from './middleware/refresh.middleware';
 import { MiddlewareModule } from './middleware/middleware.module';
 import { ImageModule } from './image/image.module';
 import { awsConfig } from './config/aws.config';
+import { baseConfig } from './config/base.config';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       envFilePath: '.env',
       isGlobal: true,
-      load: [jwtConfig, awsConfig],
+      load: [jwtConfig, awsConfig, baseConfig],
       validationSchema,
     }),
     AuthModule,
