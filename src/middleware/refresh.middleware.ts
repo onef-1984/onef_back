@@ -1,4 +1,8 @@
-import { Injectable, NestMiddleware } from '@nestjs/common';
+import {
+  Injectable,
+  NestMiddleware,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { NextFunction, Request, Response } from 'express';
 import { AuthService } from '../auth/auth.service';
 
@@ -9,34 +13,35 @@ export class RefreshMiddleware implements NestMiddleware {
   use(req: Request, res: Response, next: NextFunction) {
     const { accessToken, refreshToken } = req.cookies;
 
-    if (accessToken) {
+    if (!accessToken || !refreshToken) return next();
+
+    try {
+      this.authService.verify(accessToken, 'access');
+    } catch {
       try {
-        // accessToken이 유효하지 않으면 에러 발생
-        this.authService.verify(accessToken, 'access');
-      } catch (error) {
-        if (refreshToken) {
-          try {
-            // 리프레시 토큰으로 새로운 accessToken, refreshToken 발급
-            const token = this.authService.refresh(refreshToken);
+        const token = this.authService.refresh(refreshToken);
 
-            res
-              .cookie('accessToken', token.accessToken, {
-                httpOnly: true,
-                secure: true,
-                sameSite: 'lax',
-              })
-              .cookie('refreshToken', token.refreshToken, {
-                httpOnly: true,
-                secure: true,
-                sameSite: 'lax',
-              });
-          } catch (error) {
-            next();
-          }
-        }
+        req.cookies = {
+          accessToken: token.accessToken,
+          refreshToken: token.refreshToken,
+        };
+
+        res
+          .cookie('accessToken', token.accessToken, {
+            httpOnly: true,
+            secure: true,
+            sameSite: 'lax',
+          })
+          .cookie('refreshToken', token.refreshToken, {
+            httpOnly: true,
+            secure: true,
+            sameSite: 'lax',
+          });
+      } catch {
+        throw new UnauthorizedException('로그인이 필요합니다');
       }
+    } finally {
+      next();
     }
-
-    next();
   }
 }

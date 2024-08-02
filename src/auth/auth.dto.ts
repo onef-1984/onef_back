@@ -21,7 +21,7 @@ export class SignUpDto {
   nickname: string;
 
   @IsOptional()
-  @IsUrl()
+  // @IsUrl({}, { message: '올바른 URL을 입력해주세요.' })
   profileImage: string;
 }
 
@@ -30,6 +30,10 @@ export class SignInDto extends PickType(SignUpDto, [
   'password',
 ] as const) {}
 
-export class ChangeNicknameDto extends PartialType(
-  OmitType(SignUpDto, ['email'] as const),
-) {}
+export class ChangeNicknameDto extends PickType(SignUpDto, [
+  'nickname',
+] as const) {}
+
+export class ChangeProfileImageDto extends PickType(SignUpDto, [
+  'profileImage',
+] as const) {}

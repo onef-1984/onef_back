@@ -7,21 +7,21 @@ export class ImageService {
   constructor(private imageRepository: ImageRepository) {}
 
   async putImage(file: Express.Multer.File) {
-    const imageName = Date.now().toString();
+    const imageName = uuidv4() + Date.now().toString();
     const ext = file.originalname.split('.').pop();
 
-    const imageUrl = await this.imageRepository.putImageToS3(
-      `${imageName}.${ext}`,
+    const imageUrl = await this.imageRepository.putImageToS3({
+      fileName: `${imageName}.${ext}`,
       file,
       ext,
-    );
+    });
 
     return imageUrl;
   }
 
   async putImages(files: Express.Multer.File[]) {
     const a = files.map((file) => {
-      const fileName = uuidv4();
+      const fileName = uuidv4() + Date.now().toString();
       const ext = file.originalname.split('.').pop();
 
       return { fileName, file, ext };

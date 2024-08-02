@@ -14,6 +14,7 @@ import { MiddlewareModule } from './middleware/middleware.module';
 import { ImageModule } from './image/image.module';
 import { awsConfig } from './config/aws.config';
 import { baseConfig } from './config/base.config';
+import { UtilModule } from './util/util.module';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { baseConfig } from './config/base.config';
     AladinModule,
     MiddlewareModule,
     ImageModule,
+    UtilModule,
   ],
   controllers: [AppController],
 })

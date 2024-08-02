@@ -5,6 +5,8 @@ import { genSalt, hash, compare } from 'bcryptjs';
 import { JwtService } from '@nestjs/jwt';
 import { jwtConfig } from 'src/config/jwt.config';
 import { ConfigType } from '@nestjs/config';
+import { UtilService } from 'src/util/util.service';
+import { User } from '@prisma/client';
 
 @Injectable()
 export class AuthService {
@@ -12,40 +14,41 @@ export class AuthService {
     @Inject(jwtConfig.KEY) private jwt: ConfigType<typeof jwtConfig>,
     private authRepository: AuthRepository,
     private jwtService: JwtService,
+    private utilService: UtilService,
   ) {}
 
   generateToken(
-    payload: { email: string; nickname: string; id: string },
+    payload: Pick<User, 'id' | 'email' | 'nickname'>,
     type: 'access' | 'refresh',
   ) {
     const secret =
       type === 'access' ? this.jwt.accessSecret : this.jwt.refreshSecret;
     const expiresIn = type === 'access' ? '1h' : '30d';
 
-    return this.jwtService.sign(payload, {
+    const token = this.jwtService.sign(payload, {
       secret,
       expiresIn,
     });
+
+    return token;
   }
 
   verify(token: string, type: 'access' | 'refresh') {
     const secret =
       type === 'access' ? this.jwt.accessSecret : this.jwt.refreshSecret;
 
-    const { email, nickname, id } = this.jwtService.verify(token, {
+    const { id, nickname, email } = this.jwtService.verify(token, {
       secret,
     });
 
-    return { email, nickname, id };
+    return { id, nickname, email };
   }
 
   refresh(refresh: string) {
-    const { email, nickname, id } = this.jwtService.verify(refresh, {
-      secret: this.jwt.refreshSecret,
-    });
+    const payload = this.verify(refresh, 'refresh');
 
-    const accessToken = this.generateToken({ email, nickname, id }, 'access');
-    const refreshToken = this.generateToken({ email, nickname, id }, 'refresh');
+    const accessToken = this.generateToken(payload, 'access');
+    const refreshToken = this.generateToken(payload, 'refresh');
 
     return { accessToken, refreshToken };
   }
@@ -59,13 +62,13 @@ export class AuthService {
     const salt = await genSalt();
     const hashedPassword = await hash(password, salt);
 
-    const res = await this.authRepository.createUser({
+    const payload = await this.authRepository.createUser({
       ...signUpDto,
       password: hashedPassword,
     });
 
-    const accessToken = this.generateToken(res, 'access');
-    const refreshToken = this.generateToken(res, 'refresh');
+    const accessToken = this.generateToken(payload, 'access');
+    const refreshToken = this.generateToken(payload, 'refresh');
 
     return { accessToken, refreshToken };
   }
@@ -74,8 +77,10 @@ export class AuthService {
     const user = await this.authRepository.findUserByEmail(signInDto.email);
 
     if (user && (await compare(signInDto.password, user.password))) {
-      const accessToken = this.generateToken(user, 'access');
-      const refreshToken = this.generateToken(user, 'refresh');
+      const payload = this.utilService.omit(user, ['password']);
+
+      const accessToken = this.generateToken(payload, 'access');
+      const refreshToken = this.generateToken(payload, 'refresh');
 
       return { accessToken, refreshToken };
     } else if (!user) {

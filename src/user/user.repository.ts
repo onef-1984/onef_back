@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { ChangeNicknameDto } from 'src/auth/auth.dto';
+import { ChangeNicknameDto, ChangeProfileImageDto } from 'src/auth/auth.dto';
 
 import { PrismaService } from 'src/prisma/prisma.service';
 
@@ -14,6 +14,25 @@ export class UserRepository {
     });
 
     return newUser;
+  }
+
+  async changeProfileImage(
+    changeProfileImageDto: ChangeProfileImageDto,
+    userId: string,
+  ) {
+    const newUser = await this.prisma.user.update({
+      where: { id: userId },
+      data: { profileImage: changeProfileImageDto.profileImage },
+    });
+
+    return newUser;
+  }
+
+  async getUserById(userId: string) {
+    return this.prisma.user.findUnique({
+      where: { id: userId },
+      select: { id: true, email: true, nickname: true, profileImage: true },
+    });
   }
 
   async getUserReports(userId: string) {

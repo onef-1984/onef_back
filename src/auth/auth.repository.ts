@@ -14,7 +14,7 @@ export class AuthRepository {
           create: {},
         },
       },
-      select: { id: true, email: true, nickname: true },
+      omit: { createdAt: true, updatedAt: true, password: true },
     });
   }
 
