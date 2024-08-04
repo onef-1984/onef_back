@@ -22,8 +22,14 @@ export class ReportService {
     return report;
   }
 
-  async getReportList(query: SearchReportDto) {
-    return this.reportRepository.getReportList(query);
+  async getReportListBySearch(query: SearchReportDto) {
+    const totalResults =
+      await this.reportRepository.getReportListBySearch_Count(query);
+    const items = await this.reportRepository.getReportListBySearch(query);
+
+    const hasNext = totalResults > Number(query.skip) * Number(query.take);
+
+    return { hasNext, items };
   }
 
   async getTopLikedReports() {

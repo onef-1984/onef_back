@@ -33,13 +33,34 @@ export class ReportRepository {
     return newReport;
   }
 
-  async getReportList({ orderBy, skip, take, keyword }: SearchReportDto) {
+  async getReportListBySearch_Count({ keyword }: SearchReportDto) {
+    return await this.prisma.report.count({
+      where: {
+        OR: [
+          { title: { contains: keyword } },
+          { content: { contains: keyword } },
+          { book: { title: { contains: keyword } } },
+          { book: { author: { contains: keyword } } },
+        ],
+      },
+    });
+  }
+
+  async getReportListBySearch({
+    orderBy,
+    skip,
+    take,
+    keyword,
+  }: SearchReportDto) {
     return await this.prisma.report.findMany({
       include: {
+        book: { select: { cover: true, title: true } },
+        user: { select: { id: true, nickname: true } },
         _count: {
           select: { userLiked: true },
         },
       },
+      omit: { userId: true, isbn13: true, tags: true },
       orderBy:
         orderBy === 'createdAt'
           ? { createdAt: 'desc' }
@@ -52,6 +73,8 @@ export class ReportRepository {
         OR: [
           { title: { contains: keyword } },
           { content: { contains: keyword } },
+          { book: { title: { contains: keyword } } },
+          { book: { author: { contains: keyword } } },
         ],
       },
     });

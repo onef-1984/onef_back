@@ -43,7 +43,7 @@ export class ReportController {
 
   @Get('search')
   async getReportList(@Query() query: SearchReportDto) {
-    return this.reportService.getReportList(query);
+    return this.reportService.getReportListBySearch(query);
   }
 
   @Get(':reportId')

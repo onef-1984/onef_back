@@ -19,7 +19,7 @@ export class CreateReportDto {
 }
 
 export class SearchReportDto {
-  @IsNotEmpty()
+  // @IsNotEmpty()
   @IsString()
   keyword: string;
 
@@ -31,7 +31,7 @@ export class SearchReportDto {
   @IsString()
   take: string;
 
-  @IsNotEmpty()
+  // @IsNotEmpty()
   @IsString()
   skip: string;
 }
