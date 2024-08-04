@@ -2,25 +2,14 @@ import { Injectable } from '@nestjs/common';
 import { AladinRepository } from './aladin.repository';
 import { AladinBookListDto, IsbnDto } from './aladin.dto';
 import { BookRepository } from 'src/book/book.repository';
-
-const omit: <T extends Record<string, any>, K extends Array<keyof T>>(
-  obj: T,
-  keys: K,
-) => T = (obj, keys) => {
-  for (const key of keys) {
-    delete obj[key];
-  }
-
-  return obj;
-};
-
-export default omit;
+import { UtilService } from 'src/util/util.service';
 
 @Injectable()
 export class AladinService {
   constructor(
     private aladinRepository: AladinRepository,
     private bookRepository: BookRepository,
+    private utilService: UtilService,
   ) {}
 
   // 검색
@@ -57,7 +46,7 @@ export class AladinService {
       };
     });
 
-    const hasNext = totalResults > startIndex + itemsPerPage;
+    const hasNext = totalResults > startIndex * itemsPerPage;
 
     return {
       hasNext,
@@ -110,7 +99,7 @@ export class AladinService {
         subTitle,
         originalTitle,
         itemPage,
-        ...omit(packing, ['styleDesc']),
+        ...this.utilService.omit(packing, ['styleDesc']),
       },
     };
   }
