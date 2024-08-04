@@ -9,18 +9,18 @@ datasource db {
 }
 
 model User {
-  id           String   @id @default(uuid())
-  role         Role     @default(USER)
-  email        String   @unique
+  id           String       @id @default(uuid())
+  role         Role         @default(USER)
+  email        String       @unique
   password     String
-  nickname     String   @unique
+  nickname     String       @unique
   profileImage String?
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
   // 연결
-  report       Report[] @relation("User_BookReport")
-  reportLike   Report[] @relation("User_BookReportLike")
-  notify       Notify?  @relation("notification")
+  report       Report[]     @relation("User_BookReport")
+  reportLikes  ReportLike[] @relation("User_BookReportLike")
+  notify       Notify?      @relation("notification")
 }
 
 enum Role {
@@ -35,20 +35,31 @@ model Notify {
   user   User   @relation(fields: [userId], references: [id], name: "notification")
 }
 
+model ReportLike {
+  userId    String
+  reportId  String
+  createdAt DateTime @default(now())
+
+  user   User   @relation(fields: [userId], references: [id], name: "User_BookReportLike")
+  report Report @relation(fields: [reportId], references: [id], name: "User_BookReportLike")
+
+  @@id([userId, reportId])
+}
+
 model Report {
-  id            String   @id @default(uuid())
-  title         String
-  content       String
-  tags          String[] @default([])
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-  favoriteCount Int      @default(0)
+  id        String   @id @default(uuid())
+  title     String
+  content   String
+  tags      String[] @default([])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   // 연결
-  userId        String
-  user          User     @relation(fields: [userId], references: [id], name: "User_BookReport", onDelete: Cascade)
-  userLiked     User[]   @relation("User_BookReportLike")
-  isbn13        String?
-  book          Book?    @relation(fields: [isbn13], references: [isbn13], onDelete: SetNull)
+  userId    String
+  user      User         @relation(fields: [userId], references: [id], name: "User_BookReport", onDelete: Cascade)
+  userLiked ReportLike[] @relation("User_BookReportLike")
+  isbn13    String?
+  book      Book?        @relation(fields: [isbn13], references: [isbn13], onDelete: SetNull)
 }
 
 model Book {

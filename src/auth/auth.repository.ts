@@ -24,4 +24,11 @@ export class AuthRepository {
       select: { id: true, email: true, nickname: true, password: true },
     });
   }
+
+  async findUserById(id: string) {
+    return await this.prisma.user.findUnique({
+      where: { id },
+      select: { id: true, email: true, nickname: true, password: true },
+    });
+  }
 }

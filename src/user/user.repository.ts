@@ -1,28 +1,28 @@
 import { Injectable } from '@nestjs/common';
-import { ChangeNicknameDto, ChangeProfileImageDto } from 'src/auth/auth.dto';
-
+import { ChangeProfileDto } from 'src/auth/auth.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class UserRepository {
   constructor(private prisma: PrismaService) {}
 
-  async changeNickname(changeNicknameDto: ChangeNicknameDto, userId: string) {
+  async changeProfile(changeProfileDto: ChangeProfileDto, userId: string) {
     const newUser = await this.prisma.user.update({
       where: { id: userId },
-      data: { nickname: changeNicknameDto.nickname },
+      data: {
+        ...changeProfileDto,
+      },
     });
 
     return newUser;
   }
 
-  async changeProfileImage(
-    changeProfileImageDto: ChangeProfileImageDto,
-    userId: string,
-  ) {
+  async changePassword(password: string, userId: string) {
     const newUser = await this.prisma.user.update({
       where: { id: userId },
-      data: { profileImage: changeProfileImageDto.profileImage },
+      data: {
+        password,
+      },
     });
 
     return newUser;

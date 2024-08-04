@@ -1,6 +1,10 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { ReportRepository } from './report.repository';
-import { CreateReportDto, UpdateReportDto } from './report.dto';
+import {
+  CreateReportDto,
+  SearchReportDto,
+  UpdateReportDto,
+} from './report.dto';
 
 @Injectable()
 export class ReportService {
@@ -16,6 +20,35 @@ export class ReportService {
     if (!report) throw new NotFoundException('Report not found');
 
     return report;
+  }
+
+  async getReportList(query: SearchReportDto) {
+    return this.reportRepository.getReportList(query);
+  }
+
+  async getTopLikedReports() {
+    const oneWeekAgo = new Date();
+    oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+
+    const likedReportIdList = await this.reportRepository.getMostLikedReport(
+      oneWeekAgo,
+      8,
+    );
+
+    const topReportIds = likedReportIdList.map((like) => like.reportId);
+
+    const reportList =
+      await this.reportRepository.getReportsByReportIds(topReportIds);
+
+    const order = likedReportIdList.map(({ reportId, _count }) => {
+      const report = reportList.find(({ id }) => id === reportId);
+
+      report._count.userLiked = _count.userId;
+
+      return report;
+    });
+
+    return order;
   }
 
   async checkIsOwner(reportId: string, userId: string) {

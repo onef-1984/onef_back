@@ -18,6 +18,24 @@ export class CreateReportDto {
   tags: string[];
 }
 
+export class SearchReportDto {
+  @IsNotEmpty()
+  @IsString()
+  keyword: string;
+
+  @IsNotEmpty()
+  @IsString()
+  orderBy: 'createdAt' | 'userLiked';
+
+  @IsNotEmpty()
+  @IsString()
+  take: string;
+
+  @IsNotEmpty()
+  @IsString()
+  skip: string;
+}
+
 export class UpdateReportDto extends OmitType(CreateReportDto, [
   'isbn13',
 ] as const) {}

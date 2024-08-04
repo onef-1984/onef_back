@@ -7,10 +7,15 @@ import {
   Param,
   Post,
   Put,
+  Query,
   Req,
   UseGuards,
 } from '@nestjs/common';
-import { CreateReportDto, UpdateReportDto } from './report.dto';
+import {
+  CreateReportDto,
+  SearchReportDto,
+  UpdateReportDto,
+} from './report.dto';
 import { User } from '@prisma/client';
 import { Request } from 'express';
 import { ReportService } from './report.service';
@@ -34,6 +39,11 @@ export class ReportController {
     );
 
     return newReport;
+  }
+
+  @Get('search')
+  async getReportList(@Query() query: SearchReportDto) {
+    return this.reportService.getReportList(query);
   }
 
   @Get(':reportId')

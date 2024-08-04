@@ -6,26 +6,23 @@ import { v4 as uuidv4 } from 'uuid';
 export class ImageService {
   constructor(private imageRepository: ImageRepository) {}
 
-  async putImage(file: Express.Multer.File) {
-    const imageName = uuidv4() + Date.now().toString();
-    const ext = file.originalname.split('.').pop();
+  fileNameFormatter(file: Express.Multer.File) {
+    const fileName = uuidv4() + Date.now().toString();
+    const ext = file.originalname.split('.').pop() ?? 'jpg';
 
-    const imageUrl = await this.imageRepository.putImageToS3({
-      fileName: `${imageName}.${ext}`,
-      file,
-      ext,
-    });
+    return { fileName, file, ext };
+  }
+
+  async putImage(file: Express.Multer.File) {
+    const imageUrl = await this.imageRepository.putImageToS3(
+      this.fileNameFormatter(file),
+    );
 
     return imageUrl;
   }
 
   async putImages(files: Express.Multer.File[]) {
-    const a = files.map((file) => {
-      const fileName = uuidv4() + Date.now().toString();
-      const ext = file.originalname.split('.').pop();
-
-      return { fileName, file, ext };
-    });
+    const a = files.map((file) => this.fileNameFormatter(file));
 
     const imageUrl = await this.imageRepository.putImagesToS3(a);
 

@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Patch, Req, UseGuards } from '@nestjs/common';
 import { User } from '@prisma/client';
 import { Request } from 'express';
-import { ChangeNicknameDto, ChangeProfileImageDto } from 'src/auth/auth.dto';
+import { ChangePasswordDto, ChangeProfileDto } from 'src/auth/auth.dto';
 import { UserService } from './user.service';
 import { AuthGuard } from 'src/auth/auth.guard';
 
@@ -24,28 +24,33 @@ export class UserController {
     return this.userService.getUserReports(id);
   }
 
-  @Patch('profile-image')
+  @Patch('profile')
   @UseGuards(AuthGuard)
-  async changeProfileImage(
-    @Body() changeProfileImageDto: ChangeProfileImageDto,
-    @Req() req: Request,
-  ) {
-    const { id: userId } = req.user as User;
-    return this.userService.changeProfileImage(changeProfileImageDto, userId);
-  }
-
-  @Patch('nickname')
-  @UseGuards(AuthGuard)
-  async changeNickname(
-    @Body() changeNicknameDto: ChangeNicknameDto,
+  async changeProfile(
+    @Body() changeProfileDto: ChangeProfileDto,
     @Req() req: Request,
   ) {
     const { id } = req.user as User;
+    const { nickname, profileImage } = changeProfileDto;
 
-    const newUser = await this.userService.changeNickname(
-      changeNicknameDto,
+    const newUser = await this.userService.changeProfile(
+      { nickname, profileImage },
       id,
     );
+
+    return newUser;
+  }
+
+  @Patch('password')
+  @UseGuards(AuthGuard)
+  async changePassword(
+    @Body() changePasswordDto: ChangePasswordDto,
+    @Req() req: Request,
+  ) {
+    const { id } = req.user as User;
+    const { password } = changePasswordDto;
+
+    const newUser = await this.userService.changePassword(password, id);
 
     return newUser;
   }

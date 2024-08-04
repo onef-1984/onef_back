@@ -1,11 +1,5 @@
 import { OmitType, PartialType, PickType } from '@nestjs/mapped-types';
-import {
-  IsEmail,
-  IsNotEmpty,
-  IsOptional,
-  IsString,
-  IsUrl,
-} from 'class-validator';
+import { IsEmail, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class SignUpDto {
   @IsNotEmpty()
@@ -30,10 +24,10 @@ export class SignInDto extends PickType(SignUpDto, [
   'password',
 ] as const) {}
 
-export class ChangeNicknameDto extends PickType(SignUpDto, [
-  'nickname',
-] as const) {}
+export class ChangeProfileDto extends PartialType(
+  OmitType(SignUpDto, ['email', 'password'] as const),
+) {}
 
-export class ChangeProfileImageDto extends PickType(SignUpDto, [
-  'profileImage',
+export class ChangePasswordDto extends PickType(SignUpDto, [
+  'password',
 ] as const) {}

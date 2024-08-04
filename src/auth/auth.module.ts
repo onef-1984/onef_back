@@ -10,6 +10,6 @@ import { UtilModule } from 'src/util/util.module';
   controllers: [AuthController],
   providers: [AuthService, AuthRepository, AuthGuard],
   imports: [JwtModule.register({}), UtilModule],
-  exports: [AuthService],
+  exports: [AuthService, AuthRepository],
 })
 export class AuthModule {}

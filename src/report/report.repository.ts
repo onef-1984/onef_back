@@ -1,6 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { CreateReportDto, UpdateReportDto } from './report.dto';
+import {
+  CreateReportDto,
+  SearchReportDto,
+  UpdateReportDto,
+} from './report.dto';
 
 @Injectable()
 export class ReportRepository {
@@ -29,9 +33,69 @@ export class ReportRepository {
     return newReport;
   }
 
-  async getReportList() {
-    await this.prisma.report.findMany({
-      where: {},
+  async getReportList({ orderBy, skip, take, keyword }: SearchReportDto) {
+    return await this.prisma.report.findMany({
+      include: {
+        _count: {
+          select: { userLiked: true },
+        },
+      },
+      orderBy:
+        orderBy === 'createdAt'
+          ? { createdAt: 'desc' }
+          : {
+              userLiked: { _count: 'desc' },
+            },
+      skip: Number(skip),
+      take: Number(take),
+      where: {
+        OR: [
+          { title: { contains: keyword } },
+          { content: { contains: keyword } },
+        ],
+      },
+    });
+  }
+
+  async getMostLikedReport(gte: Date, take: number) {
+    return await this.prisma.reportLike.groupBy({
+      by: ['reportId'],
+      where: {
+        createdAt: {
+          gte,
+        },
+      },
+      orderBy: {
+        _count: {
+          userId: 'desc',
+        },
+      },
+      _count: {
+        userId: true,
+      },
+      take,
+    });
+  }
+
+  async getReportsByReportIds(reportIds: string[]) {
+    return await this.prisma.report.findMany({
+      where: { id: { in: reportIds } },
+      include: {
+        _count: {
+          select: { userLiked: true },
+        },
+      },
+    });
+  }
+
+  async getReportLikeCount(id: string) {
+    return await this.prisma.report.findUnique({
+      where: { id },
+      select: {
+        _count: {
+          select: { userLiked: true },
+        },
+      },
     });
   }
 
@@ -43,10 +107,20 @@ export class ReportRepository {
       include: {
         book: {
           include: { subInfo: { select: { itemPage: true } } },
-          omit: { subInfoId: true, createdAt: true, updatedAt: true },
+          omit: {
+            subInfoId: true,
+            categoryId: true,
+            pubDate: true,
+            priceStandard: true,
+            createdAt: true,
+            updatedAt: true,
+          },
         },
         user: {
           select: { id: true, nickname: true },
+        },
+        _count: {
+          select: { userLiked: true },
         },
       },
       omit: { isbn13: true, userId: true },
