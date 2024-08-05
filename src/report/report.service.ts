@@ -22,12 +22,44 @@ export class ReportService {
     return report;
   }
 
-  async getReportListBySearch(query: SearchReportDto) {
-    const totalResults =
-      await this.reportRepository.getReportListBySearch_Count(query);
-    const items = await this.reportRepository.getReportListBySearch(query);
+  async getReportListBySearch(query: SearchReportDto, searchType: string) {
+    function getWhere(searchType: string) {
+      switch (searchType) {
+        case 'report':
+          return {
+            OR: [
+              { title: { contains: query.keyword } },
+              { content: { contains: query.keyword } },
+              { book: { title: { contains: query.keyword } } },
+              { book: { author: { contains: query.keyword } } },
+            ],
+          };
 
-    const hasNext = totalResults > Number(query.skip) * Number(query.take);
+        case 'book':
+          return {
+            isbn13: query.keyword,
+          };
+
+        case 'user':
+          return { userId: query.keyword };
+
+        case 'tag':
+          return { tags: { has: query.keyword } };
+      }
+    }
+
+    console.log(query);
+
+    const where = getWhere(searchType);
+
+    const totalResults =
+      await this.reportRepository.getReportListBySearch_Count(where);
+    const items = await this.reportRepository.getReportListBySearch(
+      query,
+      where,
+    );
+
+    const hasNext = totalResults > query.skip + 1 * query.take;
 
     return { hasNext, items };
   }

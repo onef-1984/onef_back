@@ -33,25 +33,16 @@ export class ReportRepository {
     return newReport;
   }
 
-  async getReportListBySearch_Count({ keyword }: SearchReportDto) {
+  async getReportListBySearch_Count(where: any) {
     return await this.prisma.report.count({
-      where: {
-        OR: [
-          { title: { contains: keyword } },
-          { content: { contains: keyword } },
-          { book: { title: { contains: keyword } } },
-          { book: { author: { contains: keyword } } },
-        ],
-      },
+      where,
     });
   }
 
-  async getReportListBySearch({
-    orderBy,
-    skip,
-    take,
-    keyword,
-  }: SearchReportDto) {
+  async getReportListBySearch(
+    { orderBy, skip, take }: SearchReportDto,
+    where: any,
+  ) {
     return await this.prisma.report.findMany({
       include: {
         book: { select: { cover: true, title: true } },
@@ -67,16 +58,9 @@ export class ReportRepository {
           : {
               userLiked: { _count: 'desc' },
             },
-      skip: Number(skip),
-      take: Number(take),
-      where: {
-        OR: [
-          { title: { contains: keyword } },
-          { content: { contains: keyword } },
-          { book: { title: { contains: keyword } } },
-          { book: { author: { contains: keyword } } },
-        ],
-      },
+      skip: skip,
+      take: take,
+      where,
     });
   }
 
@@ -133,7 +117,6 @@ export class ReportRepository {
           omit: {
             subInfoId: true,
             categoryId: true,
-            pubDate: true,
             priceStandard: true,
             createdAt: true,
             updatedAt: true,

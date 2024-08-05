@@ -5,6 +5,7 @@ import {
   ForbiddenException,
   Get,
   Param,
+  ParseIntPipe,
   Post,
   Put,
   Query,
@@ -42,8 +43,21 @@ export class ReportController {
   }
 
   @Get('search')
-  async getReportList(@Query() query: SearchReportDto) {
-    return this.reportService.getReportListBySearch(query);
+  async getReportList(
+    @Query('skip', new ParseIntPipe()) skip: number,
+    @Query('take', new ParseIntPipe()) take: number,
+    @Query('keyword') keyword: string,
+    @Query('orderBy') orderBy: 'createdAt' | 'userLiked',
+    @Query('searchType') searchType: string,
+  ) {
+    const query: SearchReportDto = {
+      skip,
+      take,
+      keyword,
+      orderBy,
+    };
+
+    return this.reportService.getReportListBySearch(query, searchType);
   }
 
   @Get(':reportId')

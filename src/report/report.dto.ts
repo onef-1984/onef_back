@@ -1,5 +1,11 @@
 import { OmitType } from '@nestjs/mapped-types';
-import { IsISBN, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import {
+  IsISBN,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
+} from 'class-validator';
 
 export class CreateReportDto {
   @IsNotEmpty()
@@ -28,12 +34,12 @@ export class SearchReportDto {
   orderBy: 'createdAt' | 'userLiked';
 
   @IsNotEmpty()
-  @IsString()
-  take: string;
+  @IsNumber()
+  take: number;
 
-  // @IsNotEmpty()
-  @IsString()
-  skip: string;
+  @IsNotEmpty()
+  @IsNumber()
+  skip: number;
 }
 
 export class UpdateReportDto extends OmitType(CreateReportDto, [
