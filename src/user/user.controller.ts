@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Patch, Req, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Patch,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { User } from '@prisma/client';
 import { Request } from 'express';
 import { ChangePasswordDto, ChangeProfileDto } from 'src/auth/auth.dto';
@@ -22,6 +30,11 @@ export class UserController {
   async getReports(@Req() req: Request) {
     const { id } = req.user as User;
     return this.userService.getUserReports(id);
+  }
+
+  @Get(':userId')
+  async getUser(@Param('userId') userId: string) {
+    return await this.userService.getUserById(userId);
   }
 
   @Patch('profile')
