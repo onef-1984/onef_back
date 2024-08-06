@@ -64,37 +64,6 @@ export class ReportRepository {
     });
   }
 
-  async getMostLikedReport(gte: Date, take: number) {
-    return await this.prisma.reportLike.groupBy({
-      by: ['reportId'],
-      where: {
-        createdAt: {
-          gte,
-        },
-      },
-      orderBy: {
-        _count: {
-          userId: 'desc',
-        },
-      },
-      _count: {
-        userId: true,
-      },
-      take,
-    });
-  }
-
-  async getReportsByReportIds(reportIds: string[]) {
-    return await this.prisma.report.findMany({
-      where: { id: { in: reportIds } },
-      include: {
-        _count: {
-          select: { userLiked: true },
-        },
-      },
-    });
-  }
-
   async getReportLikeCount(id: string) {
     return await this.prisma.report.findUnique({
       where: { id },

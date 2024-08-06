@@ -40,9 +40,6 @@ export class ReportService {
             isbn13: query.keyword,
           };
 
-        // case 'user':
-        //   return { user: { nickname: { equals: query.keyword } } };
-
         case 'user':
           return { userId: query.keyword };
 
@@ -63,31 +60,6 @@ export class ReportService {
     const hasNext = totalResults > query.skip + 1 * query.take;
 
     return { hasNext, items };
-  }
-
-  async getTopLikedReports() {
-    const oneWeekAgo = new Date();
-    oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
-
-    const likedReportIdList = await this.reportRepository.getMostLikedReport(
-      oneWeekAgo,
-      8,
-    );
-
-    const topReportIds = likedReportIdList.map((like) => like.reportId);
-
-    const reportList =
-      await this.reportRepository.getReportsByReportIds(topReportIds);
-
-    const order = likedReportIdList.map(({ reportId, _count }) => {
-      const report = reportList.find(({ id }) => id === reportId);
-
-      report._count.userLiked = _count.userId;
-
-      return report;
-    });
-
-    return order;
   }
 
   async checkIsOwner(reportId: string, userId: string) {

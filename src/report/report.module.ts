@@ -4,11 +4,12 @@ import { ReportService } from './report.service';
 import { ReportRepository } from './report.repository';
 import { AuthModule } from 'src/auth/auth.module';
 import { UtilModule } from 'src/util/util.module';
+import { ReportLikesModule } from 'src/report-likes/report-likes.module';
 
 @Module({
   controllers: [ReportController],
   providers: [ReportService, ReportRepository],
-  imports: [AuthModule, UtilModule],
-  exports: [ReportService],
+  imports: [AuthModule, UtilModule, ReportLikesModule],
+  exports: [ReportService, ReportRepository],
 })
 export class ReportModule {}

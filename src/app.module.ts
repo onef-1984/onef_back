@@ -15,6 +15,7 @@ import { ImageModule } from './image/image.module';
 import { awsConfig } from './config/aws.config';
 import { baseConfig } from './config/base.config';
 import { UtilModule } from './util/util.module';
+import { ReportLikesModule } from './report-likes/report-likes.module';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { UtilModule } from './util/util.module';
     MiddlewareModule,
     ImageModule,
     UtilModule,
+    ReportLikesModule,
   ],
   controllers: [AppController],
 })
