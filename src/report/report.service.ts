@@ -40,6 +40,9 @@ export class ReportService {
             isbn13: query.keyword,
           };
 
+        // case 'user':
+        //   return { user: { nickname: { equals: query.keyword } } };
+
         case 'user':
           return { userId: query.keyword };
 
@@ -47,8 +50,6 @@ export class ReportService {
           return { tags: { has: query.keyword } };
       }
     }
-
-    console.log(query);
 
     const where = getWhere(searchType);
 
