@@ -18,7 +18,7 @@ export class AuthService {
   ) {}
 
   generateToken(
-    payload: Pick<User, 'id' | 'email' | 'nickname'>,
+    payload: Pick<User, 'id' | 'email' | 'nickname' | 'role'>,
     type: 'access' | 'refresh',
   ) {
     const secret =
@@ -37,11 +37,11 @@ export class AuthService {
     const secret =
       type === 'access' ? this.jwt.accessSecret : this.jwt.refreshSecret;
 
-    const { id, nickname, email } = this.jwtService.verify(token, {
+    const { id, nickname, email, role } = this.jwtService.verify(token, {
       secret,
     });
 
-    return { id, nickname, email };
+    return { id, nickname, email, role };
   }
 
   refresh(refresh: string) {
