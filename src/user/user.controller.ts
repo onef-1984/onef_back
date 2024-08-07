@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Get,
@@ -12,10 +13,14 @@ import { Request } from 'express';
 import { ChangePasswordDto, ChangeProfileDto } from 'src/auth/auth.dto';
 import { UserService } from './user.service';
 import { AuthGuard } from 'src/auth/auth.guard';
+import { AuthService } from 'src/auth/auth.service';
 
 @Controller('user')
 export class UserController {
-  constructor(private userService: UserService) {}
+  constructor(
+    private userService: UserService,
+    private authService: AuthService,
+  ) {}
 
   @Get('me')
   @UseGuards(AuthGuard)
@@ -60,10 +65,19 @@ export class UserController {
     @Body() changePasswordDto: ChangePasswordDto,
     @Req() req: Request,
   ) {
-    const { id } = req.user as User;
-    const { password } = changePasswordDto;
+    const { id, email } = req.user as User;
+    const { oldPassword, newPassword } = changePasswordDto;
 
-    const newUser = await this.userService.changePassword(password, id);
+    const isPasswordMatch = await this.authService.isPasswordMatch(
+      oldPassword,
+      email,
+    );
+
+    if (!isPasswordMatch) {
+      throw new BadRequestException('비밀번호가 일치하지 않습니다');
+    }
+
+    const newUser = await this.userService.changePassword(newPassword, id);
 
     return newUser;
   }

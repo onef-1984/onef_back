@@ -32,6 +32,12 @@ export class ChangeProfileDto extends PartialType(
   OmitType(SignUpDto, ['email', 'password'] as const),
 ) {}
 
-export class ChangePasswordDto extends PickType(SignUpDto, [
-  'password',
-] as const) {}
+export class ChangePasswordDto {
+  @IsNotEmpty()
+  @IsString()
+  oldPassword: string;
+
+  @IsNotEmpty()
+  @IsString()
+  newPassword: string;
+}

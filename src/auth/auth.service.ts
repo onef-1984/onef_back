@@ -33,6 +33,11 @@ export class AuthService {
     return token;
   }
 
+  async isPasswordMatch(password: string, email: string) {
+    const user = await this.authRepository.findUserByEmail(email);
+    return await compare(password, user.password);
+  }
+
   verify(token: string, type: 'access' | 'refresh') {
     const secret =
       type === 'access' ? this.jwt.accessSecret : this.jwt.refreshSecret;
