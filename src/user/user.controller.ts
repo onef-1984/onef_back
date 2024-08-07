@@ -44,10 +44,10 @@ export class UserController {
     @Req() req: Request,
   ) {
     const { id } = req.user as User;
-    const { nickname, profileImage } = changeProfileDto;
+    const { nickname, profileImage, bio } = changeProfileDto;
 
     const newUser = await this.userService.changeProfile(
-      { nickname, profileImage },
+      { nickname, profileImage, bio },
       id,
     );
 

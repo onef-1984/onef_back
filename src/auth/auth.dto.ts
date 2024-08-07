@@ -17,6 +17,10 @@ export class SignUpDto {
   @IsOptional()
   // @IsUrl({}, { message: '올바른 URL을 입력해주세요.' })
   profileImage: string;
+
+  @IsOptional()
+  @IsString()
+  bio: string;
 }
 
 export class SignInDto extends PickType(SignUpDto, [
