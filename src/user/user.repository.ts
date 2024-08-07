@@ -28,33 +28,10 @@ export class UserRepository {
     return newUser;
   }
 
-  async getUserById(userId: string) {
+  async getUserByNickname(userNickname: string) {
     return this.prisma.user.findUnique({
-      where: { id: userId },
+      where: { nickname: userNickname },
       omit: { password: true, createdAt: true, updatedAt: true },
     });
-  }
-
-  async getUserReports(userId: string) {
-    const reports = await this.prisma.user.findUnique({
-      where: { id: userId },
-      select: {
-        report: {
-          orderBy: { createdAt: 'desc' },
-          include: {
-            book: {
-              select: {
-                title: true,
-                author: true,
-                description: true,
-              },
-            },
-          },
-          omit: { isbn13: true, userId: true, createdAt: true, content: true },
-        },
-      },
-    });
-
-    return reports;
   }
 }

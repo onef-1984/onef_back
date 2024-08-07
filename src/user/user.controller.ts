@@ -25,21 +25,14 @@ export class UserController {
   @Get('me')
   @UseGuards(AuthGuard)
   async getMe(@Req() req: Request) {
-    const { id } = req.user as User;
+    const { nickname } = req.user as User;
 
-    return await this.userService.getUserById(id);
+    return await this.userService.getUserByNickname(nickname);
   }
 
-  @Get('reports')
-  @UseGuards(AuthGuard)
-  async getReports(@Req() req: Request) {
-    const { id } = req.user as User;
-    return this.userService.getUserReports(id);
-  }
-
-  @Get(':userId')
-  async getUser(@Param('userId') userId: string) {
-    return await this.userService.getUserById(userId);
+  @Get(':userNickname')
+  async getUser(@Param('userNickname') userNickname: string) {
+    return await this.userService.getUserByNickname(userNickname);
   }
 
   @Patch('profile')

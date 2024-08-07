@@ -22,7 +22,7 @@ export class ReportService {
     return report;
   }
 
-  async getReportListBySearch(query: SearchReportDto, searchType: string) {
+  async getReportListBySearch(query: SearchReportDto) {
     function getWhere(searchType: string) {
       switch (searchType) {
         case 'report':
@@ -43,12 +43,17 @@ export class ReportService {
         case 'user':
           return { userId: query.keyword };
 
+        // case 'user':
+        //   return {
+        //     user: { nickname: { contains: where.nickname } },
+        //   };
+
         case 'tag':
           return { tags: { has: query.keyword } };
       }
     }
 
-    const where = getWhere(searchType);
+    const where = getWhere(query.searchType);
 
     const totalResults =
       await this.reportRepository.getReportListBySearch_Count(where);
@@ -57,7 +62,7 @@ export class ReportService {
       where,
     );
 
-    const hasNext = totalResults > query.skip + 1 * query.take;
+    const hasNext = totalResults > Number(query.skip) + Number(query.take);
 
     return { hasNext, items };
   }

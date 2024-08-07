@@ -58,8 +58,8 @@ export class ReportRepository {
           : {
               userLiked: { _count: 'desc' },
             },
-      skip: skip,
-      take: take,
+      skip: Number(skip),
+      take: Number(take),
       where,
     });
   }

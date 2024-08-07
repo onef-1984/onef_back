@@ -45,11 +45,7 @@ export class UserService {
     }
   }
 
-  async getUserById(userId: string) {
-    return this.userRepository.getUserById(userId);
-  }
-
-  async getUserReports(userId: string) {
-    return this.userRepository.getUserReports(userId);
+  async getUserByNickname(userNickname: string) {
+    return this.userRepository.getUserByNickname(userNickname);
   }
 }
