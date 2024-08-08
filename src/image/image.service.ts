@@ -7,7 +7,7 @@ export class ImageService {
   constructor(private imageRepository: ImageRepository) {}
 
   fileNameFormatter(file: Express.Multer.File) {
-    const fileName = uuidv4() + Date.now().toString();
+    const fileName = uuidv4();
     const ext = file.originalname.split('.').pop() ?? 'jpg';
 
     return { fileName, file, ext };
