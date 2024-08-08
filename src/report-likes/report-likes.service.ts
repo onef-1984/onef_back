@@ -5,8 +5,8 @@ import { ReportLikesRepository } from './report-likes.repository';
 export class ReportLikesService {
   constructor(private reportLikesRepository: ReportLikesRepository) {}
 
-  async checkReportLike(reportId: string, userId: string) {
-    const report = await this.reportLikesRepository.findReportLikesById(
+  async isUserLikedReport(reportId: string, userId: string) {
+    const report = await this.reportLikesRepository.isUserLikedReport(
       reportId,
       userId,
     );
@@ -34,6 +34,7 @@ export class ReportLikesService {
     const reportList =
       await this.reportLikesRepository.getReportsByReportIds(topReportIds);
 
+    // 한 주간 받은 좋아요 순서는 likedReportIdList에만 존재
     const order = likedReportIdList.map(({ reportId, _count }) => {
       const report = reportList.find(({ id }) => id === reportId);
 

@@ -43,6 +43,15 @@ export class ReportService {
         case 'user':
           return { userId: query.keyword };
 
+        case 'userLiked':
+          return {
+            userLiked: {
+              some: {
+                userId: query.keyword,
+              },
+            },
+          };
+
         // case 'user':
         //   return {
         //     user: { nickname: { contains: where.nickname } },

@@ -34,8 +34,8 @@ export class SearchReportDto {
   orderBy: 'createdAt' | 'userLiked';
 
   @IsNotEmpty()
-  @IsIn(['report', 'book', 'tag', 'user'])
-  searchType: 'report' | 'book' | 'tag' | 'user';
+  @IsIn(['report', 'book', 'tag', 'user', 'userLiked'])
+  searchType: 'report' | 'book' | 'tag' | 'user' | 'userLiked';
 
   @IsNotEmpty()
   @IsString()

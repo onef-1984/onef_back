@@ -86,7 +86,7 @@ export class ReportController {
   ) {
     const { id: userId } = req.user as User;
 
-    const isLiked = await this.reportLikesService.checkReportLike(
+    const isLiked = await this.reportLikesService.isUserLikedReport(
       reportId,
       userId,
     );

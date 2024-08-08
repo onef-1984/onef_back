@@ -5,7 +5,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 export class ReportLikesRepository {
   constructor(private prisma: PrismaService) {}
 
-  async findReportLikesById(reportId: string, userId: string) {
+  async isUserLikedReport(reportId: string, userId: string) {
     return await this.prisma.reportLike.findUnique({
       where: {
         userId_reportId: { userId, reportId },
