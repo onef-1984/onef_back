@@ -52,11 +52,6 @@ export class ReportService {
             },
           };
 
-        // case 'user':
-        //   return {
-        //     user: { nickname: { contains: where.nickname } },
-        //   };
-
         case 'tag':
           return { tags: { has: query.keyword } };
       }
