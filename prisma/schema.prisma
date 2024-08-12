@@ -56,11 +56,22 @@ model Report {
   updatedAt DateTime @updatedAt
 
   // 연결
-  userId    String
-  user      User         @relation(fields: [userId], references: [id], name: "User_BookReport", onDelete: Cascade)
-  userLiked ReportLike[] @relation("User_BookReportLike")
-  isbn13    String?
-  book      Book?        @relation(fields: [isbn13], references: [isbn13], onDelete: SetNull)
+  userId      String
+  user        User         @relation(fields: [userId], references: [id], name: "User_BookReport", onDelete: Cascade)
+  userLiked   ReportLike[] @relation("User_BookReportLike")
+  isbn13      String?
+  book        Book?        @relation(fields: [isbn13], references: [isbn13], onDelete: SetNull)
+  editorsPick EditorsPick? @relation("EditorsPick")
+}
+
+model EditorsPick {
+  id          String   @id @default(uuid())
+  description String
+  createdAt   DateTime @default(now())
+
+  // 연결
+  reportId String? @unique
+  report   Report? @relation(fields: [reportId], references: [id], name: "EditorsPick", onDelete: SetNull)
 }
 
 model Book {

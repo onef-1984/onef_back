@@ -16,6 +16,7 @@ import { awsConfig } from './config/aws.config';
 import { baseConfig } from './config/base.config';
 import { UtilModule } from './util/util.module';
 import { ReportLikesModule } from './report-likes/report-likes.module';
+import { EditorsPickModule } from './editors-pick/editors-pick.module';
 
 @Module({
   imports: [
@@ -35,6 +36,7 @@ import { ReportLikesModule } from './report-likes/report-likes.module';
     ImageModule,
     UtilModule,
     ReportLikesModule,
+    EditorsPickModule,
   ],
   controllers: [AppController],
 })

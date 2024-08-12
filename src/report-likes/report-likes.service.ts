@@ -27,7 +27,7 @@ export class ReportLikesService {
     oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
 
     const likedReportIdList =
-      await this.reportLikesRepository.getMostLikedReport(oneWeekAgo, 8);
+      await this.reportLikesRepository.getMostLikedReport(oneWeekAgo, 12);
 
     const topReportIds = likedReportIdList.map((like) => like.reportId);
 

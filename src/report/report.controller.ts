@@ -29,6 +29,24 @@ export class ReportController {
     private reportLikesService: ReportLikesService,
   ) {}
 
+  @Get('/most-liked')
+  async getTopLikedReports() {
+    const items = await this.reportLikesService.getTopLikedReports();
+
+    return { items };
+  }
+
+  @Get('/recent')
+  async getRecentReports() {
+    return this.reportService.getReportListBySearch({
+      keyword: '',
+      orderBy: 'createdAt',
+      searchType: 'report',
+      take: '12',
+      skip: '0',
+    });
+  }
+
   @Post()
   @UseGuards(AuthGuard)
   async createReport(
