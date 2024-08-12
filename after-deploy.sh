@@ -1,4 +1,5 @@
 #!/bin/bash
+
 cd /home/ec2-user/onef_back
 npm install
 npx prisma migrate deploy
