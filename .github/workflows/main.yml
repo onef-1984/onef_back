@@ -1,0 +1,43 @@
+name: 🚀 Deploy workflow on production environment
+
+on:
+  pull_request:
+    types: [closed]
+    branches:
+      - main
+
+jobs:
+  deploy:
+    if: github.event.pull_request.merged == true
+    env:
+      ENV_PATH: .env
+      S3_BUCKET_NAME: onef-cicd
+      DEPLOYMENT_GROUP_NAME: onef_backend_deploy
+    environment: production
+    runs-on: ubuntu-latest
+    steps:
+      - name: ✅ Checkout branch
+        uses: actions/checkout@v4
+        
+      - name: 🗂️ Make config folder
+        run: mkdir -p config
+      
+      - name: 📦 Zip project files
+        run: zip -r ./$GITHUB_SHA.zip .
+      
+      - name: 🌎 Access to AWS
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_KEY }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
+          aws-region: ap-northeast-2
+          
+      - name: 🚛 Upload to S3
+        run: aws s3 cp --region ap-northeast-2 ./$GITHUB_SHA.zip s3://${{ env.S3_BUCKET_NAME }}/$GITHUB_SHA.zip
+         
+      - name: 🚀 Deploy to EC2 with CodeDeploy
+        run: aws deploy create-deployment
+             --application-name Codeit-Backend-CICD
+             --deployment-config-name CodeDeployDefault.AllAtOnce
+             --deployment-group-name ${{ env.DEPLOYMENT_GROUP_NAME }}
+             --s3-location bucket=${{ env.S3_BUCKET_NAME }},bundleType=zip,key=$GITHUB_SHA.zip
