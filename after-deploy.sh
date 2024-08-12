@@ -5,4 +5,4 @@ npm install
 npx prisma migrate deploy
 npx prisma generate
 sudo npm run build
-pm2 restart NEST_APP
+pm2 restart 0
