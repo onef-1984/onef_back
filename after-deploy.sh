@@ -1,5 +1,5 @@
 #!/bin/bash
-sudo su -
+sudo su - ec2-user
 cd /home/ec2-user/onef_back
 npm install
 npx prisma migrate deploy
