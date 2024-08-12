@@ -4,4 +4,4 @@ npm install
 npx prisma migrate deploy
 npx prisma generate
 sudo npm run build
-npx pm2 restart my-app
+pm2 restart my-app
