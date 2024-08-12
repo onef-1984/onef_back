@@ -1,4 +1,5 @@
 #!/bin/bash
+
 sudo su -
 cd /home/ec2-user/onef_back
 npm install
