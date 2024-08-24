@@ -15,6 +15,17 @@ import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { Response } from 'express';
 import { Readable } from 'stream';
 import { AuthGuard } from 'src/auth/auth.guard';
+import { ApiBody, ApiConsumes, ApiProperty } from '@nestjs/swagger';
+
+class FileUploadDto {
+  @ApiProperty({ name: 'image', type: 'string', format: 'binary' })
+  file: Express.Multer.File;
+}
+
+class FilesUploadDto {
+  @ApiProperty({ name: 'images', type: 'array', format: 'binary' })
+  files: Express.Multer.File[];
+}
 
 @Controller('image')
 export class ImageController {
@@ -22,6 +33,11 @@ export class ImageController {
 
   @UseGuards(AuthGuard)
   @UseInterceptors(FileInterceptor('image'))
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    description: 'image',
+    type: FileUploadDto,
+  })
   @Post('/single-upload')
   async putImage(@UploadedFile() file: Express.Multer.File) {
     const imageUrl = await this.imageService.putImage(file);
@@ -32,6 +48,11 @@ export class ImageController {
   @UseGuards(AuthGuard)
   @UseInterceptors(FilesInterceptor('images'))
   @Post('/multi-upload')
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    description: 'List of image',
+    type: FilesUploadDto,
+  })
   async putImages(@UploadedFiles() files: Express.Multer.File[]) {
     const imageUrl = await this.imageService.putImages(files);
 

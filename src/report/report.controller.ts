@@ -21,13 +21,31 @@ import { Request } from 'express';
 import { ReportService } from './report.service';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { ReportLikesService } from 'src/report-likes/report-likes.service';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Report')
 @Controller('report')
 export class ReportController {
   constructor(
     private reportService: ReportService,
     private reportLikesService: ReportLikesService,
   ) {}
+
+  @Post()
+  @UseGuards(AuthGuard)
+  async createReport(
+    @Body() createReportDto: CreateReportDto,
+    @Req() req: Request,
+  ) {
+    const { email } = req.user as User;
+
+    const newReport = await this.reportService.createReport(
+      createReportDto,
+      email,
+    );
+
+    return newReport;
+  }
 
   @Get('/most-liked')
   async getTopLikedReports() {
@@ -45,22 +63,6 @@ export class ReportController {
       take: '12',
       skip: '0',
     });
-  }
-
-  @Post()
-  @UseGuards(AuthGuard)
-  async createReport(
-    @Body() createReportDto: CreateReportDto,
-    @Req() req: Request,
-  ) {
-    const { email } = req.user as User;
-
-    const newReport = await this.reportService.createReport(
-      createReportDto,
-      email,
-    );
-
-    return newReport;
   }
 
   @Get('search')

@@ -1,4 +1,5 @@
 import { OmitType } from '@nestjs/mapped-types';
+import { ApiProperty } from '@nestjs/swagger';
 import {
   IsIn,
   IsISBN,
@@ -27,22 +28,29 @@ export class CreateReportDto {
 export class SearchReportDto {
   // @IsNotEmpty()
   @IsString()
+  @ApiProperty()
   keyword: string;
 
   @IsNotEmpty()
   @IsIn(['createdAt', 'userLiked'])
+  @ApiProperty({ enum: ['createdAt', 'userLiked'] })
   orderBy: 'createdAt' | 'userLiked';
 
   @IsNotEmpty()
   @IsIn(['report', 'book', 'tag', 'user', 'userLiked'])
+  @ApiProperty({
+    enum: ['report', 'book', 'tag', 'user', 'userLiked'],
+  })
   searchType: 'report' | 'book' | 'tag' | 'user' | 'userLiked';
 
   @IsNotEmpty()
   @IsString()
+  @ApiProperty({ example: '12' })
   take: string;
 
   @IsNotEmpty()
   @IsString()
+  @ApiProperty({ example: '0' })
   skip: string;
 }
 

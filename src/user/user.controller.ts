@@ -14,7 +14,9 @@ import { ChangePasswordDto, ChangeProfileDto } from 'src/auth/auth.dto';
 import { UserService } from './user.service';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { AuthService } from 'src/auth/auth.service';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('User')
 @Controller('user')
 export class UserController {
   constructor(
