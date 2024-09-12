@@ -1,5 +1,4 @@
-import { OmitType } from '@nestjs/mapped-types';
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, OmitType } from '@nestjs/swagger';
 import {
   IsIn,
   IsISBN,
@@ -11,17 +10,21 @@ import {
 export class CreateReportDto {
   @IsNotEmpty()
   @IsISBN()
+  @ApiProperty()
   isbn13: string;
 
   @IsNotEmpty()
   @IsString()
+  @ApiProperty()
   title: string;
 
   @IsNotEmpty()
   @IsString()
+  @ApiProperty()
   content: string;
 
   @IsOptional()
+  @ApiProperty()
   tags: string[];
 }
 

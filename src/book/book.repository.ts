@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateBookDto, SubInfo } from './book.dto';
-import { IsbnDto } from 'src/aladin/aladin.dto';
 
 @Injectable()
 export class BookRepository {
@@ -22,8 +21,8 @@ export class BookRepository {
   async findBookById(bookId: string) {
     return this.prisma.book.findUnique({
       where: { isbn13: bookId },
-      include: { subInfo: true },
-      omit: { subInfoId: true },
+      include: { subInfo: { omit: { id: true } } },
+      omit: { subInfoId: true, createdAt: true, updatedAt: true },
     });
   }
 }

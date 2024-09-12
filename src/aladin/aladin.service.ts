@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { AladinRepository } from './aladin.repository';
-import { AladinBookListDto, IsbnDto } from './aladin.dto';
+import { AladinBookListDto, IsbnDto } from './dto/req/aladin.dto';
 import { BookRepository } from 'src/book/book.repository';
 import { UtilService } from 'src/util/util.service';
 

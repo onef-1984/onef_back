@@ -25,11 +25,7 @@ export class UserService {
       userId,
     );
 
-    if (newUser) {
-      return { message: '비밀번호 변경이 완료되었습니다' };
-    } else {
-      throw new BadRequestException('비밀번호 변경에 실패했습니다');
-    }
+    return newUser;
   }
 
   async changeProfile(changeProfileDto: ChangeProfileDto, userId: string) {

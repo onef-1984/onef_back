@@ -4,7 +4,7 @@ import {
   CreateReportDto,
   SearchReportDto,
   UpdateReportDto,
-} from './report.dto';
+} from './dto/request/report.dto';
 
 @Injectable()
 export class ReportRepository {

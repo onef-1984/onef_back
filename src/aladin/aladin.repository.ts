@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { AladinBookListDto, IsbnDto } from './aladin.dto';
 import { GetBookDetail, GetBookList } from './aladin.type';
+import { AladinBookListDto, IsbnDto } from './dto/req/aladin.dto';
 
 @Injectable()
 export class AladinRepository {

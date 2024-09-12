@@ -15,7 +15,13 @@ import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { Response } from 'express';
 import { Readable } from 'stream';
 import { AuthGuard } from 'src/auth/auth.guard';
-import { ApiBody, ApiConsumes, ApiProperty } from '@nestjs/swagger';
+import {
+  ApiBody,
+  ApiConsumes,
+  ApiCreatedResponse,
+  ApiProperty,
+  ApiTags,
+} from '@nestjs/swagger';
 
 class FileUploadDto {
   @ApiProperty({ name: 'image', type: 'string', format: 'binary' })
@@ -27,6 +33,7 @@ class FilesUploadDto {
   files: Express.Multer.File[];
 }
 
+@ApiTags('Image')
 @Controller('image')
 export class ImageController {
   constructor(private imageService: ImageService) {}
@@ -37,6 +44,18 @@ export class ImageController {
   @ApiBody({
     description: 'image',
     type: FileUploadDto,
+  })
+  @ApiCreatedResponse({
+    description: '이미지 단일 업로드',
+    schema: {
+      type: 'object',
+      properties: {
+        imageUrl: {
+          type: 'string',
+          example: 'https://onef.co.kr/api/image/...',
+        },
+      },
+    },
   })
   @Post('/single-upload')
   async putImage(@UploadedFile() file: Express.Multer.File) {
@@ -52,6 +71,21 @@ export class ImageController {
   @ApiBody({
     description: 'List of image',
     type: FilesUploadDto,
+  })
+  @ApiCreatedResponse({
+    description: '이미지 다중 업로드',
+    schema: {
+      type: 'object',
+      properties: {
+        imageUrl: {
+          type: 'array',
+          items: {
+            type: 'string',
+            example: 'https://onef.co.kr/api/image/...',
+          },
+        },
+      },
+    },
   })
   async putImages(@UploadedFiles() files: Express.Multer.File[]) {
     const imageUrl = await this.imageService.putImages(files);

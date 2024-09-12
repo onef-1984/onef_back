@@ -1,0 +1,109 @@
+//// ------------------------------------------------------
+//// THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+//// ------------------------------------------------------
+
+Table User {
+  id String [pk]
+  role Role [not null, default: 'USER']
+  email String [unique, not null]
+  password String [not null]
+  nickname String [unique, not null]
+  profileImage String
+  bio String
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+  report Report [not null]
+  reportLikes ReportLike [not null]
+  notify Notify
+}
+
+Table Notify {
+  id String [pk]
+  userId String [unique, not null]
+  user User [not null]
+}
+
+Table ReportLike {
+  userId String [not null]
+  reportId String [not null]
+  createdAt DateTime [default: `now()`, not null]
+  user User [not null]
+  report Report [not null]
+
+  indexes {
+    (userId, reportId) [pk]
+  }
+}
+
+Table Report {
+  id String [pk]
+  title String [not null]
+  content String [not null]
+  tags String[] [not null]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+  userId String [not null]
+  user User [not null]
+  userLiked ReportLike [not null]
+  isbn13 String
+  book Book
+  editorsPick EditorsPick
+}
+
+Table EditorsPick {
+  id String [pk]
+  description String [not null]
+  createdAt DateTime [default: `now()`, not null]
+  reportId String [unique]
+  report Report
+}
+
+Table Book {
+  isbn13 String [unique, not null]
+  title String [not null]
+  author String [not null]
+  description String
+  cover String
+  pubDate String [not null]
+  publisher String [not null]
+  categoryId Int [not null]
+  categoryName String [not null]
+  priceStandard Int [not null]
+  customerReviewRank Int [not null]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+  report Report [not null]
+  subInfoId String [not null]
+  subInfo SubInfo [not null]
+}
+
+Table SubInfo {
+  id String [pk]
+  subTitle String
+  originalTitle String
+  itemPage Int
+  weight Int
+  sizeDepth Int
+  sizeHeight Int
+  sizeWidth Int
+  Book Book [not null]
+}
+
+Enum Role {
+  USER
+  ADMIN
+}
+
+Ref: Notify.userId - User.id
+
+Ref: ReportLike.userId > User.id
+
+Ref: ReportLike.reportId > Report.id [delete: Cascade]
+
+Ref: Report.userId > User.id [delete: Cascade]
+
+Ref: Report.isbn13 > Book.isbn13 [delete: Set Null]
+
+Ref: EditorsPick.reportId - Report.id [delete: Set Null]
+
+Ref: Book.subInfoId > SubInfo.id

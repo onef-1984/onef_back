@@ -1,10 +1,10 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { ReportRepository } from './report.repository';
 import {
   CreateReportDto,
   SearchReportDto,
   UpdateReportDto,
-} from './report.dto';
+} from './dto/request/report.dto';
 
 @Injectable()
 export class ReportService {
@@ -16,8 +16,6 @@ export class ReportService {
 
   async getReport(reportId: string) {
     const report = await this.reportRepository.findReportById(reportId);
-
-    if (!report) throw new NotFoundException('Report not found');
 
     return report;
   }
