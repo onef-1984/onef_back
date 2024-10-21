@@ -22,7 +22,7 @@ model User {
   report       Report[]     @relation("User_BookReport")
   reportLikes  ReportLike[] @relation("User_BookReportLike")
   notify       Notify?      @relation("notification")
-  comments     Comments[]
+  comments     Comment[]
 }
 
 enum Role {
@@ -30,15 +30,26 @@ enum Role {
   ADMIN
 }
 
-model Comments {
-  id        String   @id @unique @db.Text
-  comment   String
+model Comment {
+  id      String @id @default(uuid())
+  comment String
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  userId    String
-  user      User     @relation(fields: [userId], references: [id])
-  reportId  String
-  report    Report   @relation(fields: [reportId], references: [id])
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+
+  // 0깊이 댓글인 경우
+  reportId String?
+  report   Report? @relation(fields: [reportId], references: [id], onDelete: Cascade)
+
+  // 1깊이 이상 댓글인 경우
+  parentId String?
+  parent   Comment? @relation("CommentToComment", fields: [parentId], references: [id], onDelete: Cascade)
+
+  // 해당 댓글의 대댓글들
+  replies Comment[] @relation("CommentToComment")
 }
 
 model Notify {
@@ -74,7 +85,8 @@ model Report {
   isbn13      String?
   book        Book?        @relation(fields: [isbn13], references: [isbn13], onDelete: SetNull)
   editorsPick EditorsPick? @relation("EditorsPick")
-  comments    Comments[]
+
+  comments Comment[]
 }
 
 model EditorsPick {
