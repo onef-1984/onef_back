@@ -1,4 +1,4 @@
-import { IntersectionType } from '@nestjs/swagger';
+import { IntersectionType, PickType } from '@nestjs/swagger';
 import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
 
 export class CreateCommentBodyDto {
@@ -28,3 +28,7 @@ export class CreateCommentDto extends IntersectionType(
   CreateCommentParamDto,
   CreateCommentReqDto,
 ) {}
+
+export class PutCommentDto extends PickType(CreateCommentBodyDto, [
+  'comment',
+]) {}

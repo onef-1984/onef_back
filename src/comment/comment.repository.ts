@@ -1,20 +1,22 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { CreateCommentDto } from './dto/request/comment.dto';
+import { CreateCommentDto, PutCommentDto } from './dto/request/comment.dto';
 
 @Injectable()
 export class CommentRepository {
   constructor(private prisma: PrismaService) {}
-
   getComments(id: string) {
     return this.prisma.comment.findMany({
       where: { OR: [{ parentId: id }, { reportId: id }] },
+      orderBy: { createdAt: 'asc' },
       include: {
         replies: true,
         user: {
           select: {
             id: true,
             nickname: true,
+            profileImage: true,
+            email: true,
           },
         },
       },
@@ -31,6 +33,15 @@ export class CommentRepository {
         [link]: {
           connect: { id: parentId },
         },
+      },
+    });
+  }
+
+  async putComment(id: string, data: PutCommentDto) {
+    return await this.prisma.comment.update({
+      where: { id },
+      data: {
+        comment: data.comment,
       },
     });
   }

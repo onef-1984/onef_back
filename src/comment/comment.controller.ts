@@ -6,6 +6,7 @@ import {
   InternalServerErrorException,
   Param,
   Post,
+  Put,
   Req,
   UseGuards,
 } from '@nestjs/common';
@@ -15,11 +16,12 @@ import { User } from '@prisma/client';
 import {
   CreateCommentBodyDto,
   CreateCommentParamDto,
+  PutCommentDto,
 } from './dto/request/comment.dto';
 import { AuthGuard } from 'src/auth/auth.guard';
 
 @Controller('comments')
-export class CommentController {
+export class CommentsController {
   constructor(
     private commentService: CommentService,
     private notificationGateway: NotificationGateway,
@@ -51,7 +53,25 @@ export class CommentController {
       throw new InternalServerErrorException('댓글을 작성하지 못했습니다.');
     }
 
-    return { message: '댓글이 작성되었습니다.' };
+    return res;
+  }
+
+  @Put(':parentId')
+  @UseGuards(AuthGuard)
+  async putComment(
+    @Param('parentId') parentId: string,
+    @Body() body: PutCommentDto,
+    // @Req() req,
+  ) {
+    // const { id: userId } = req.user as User;
+
+    const res = await this.commentService.putComment(parentId, body);
+
+    if (!res) {
+      throw new InternalServerErrorException('댓글을 수정하지 못했습니다.');
+    }
+
+    return { message: '댓글이 수정되었습니다.' };
   }
 
   @Delete(':parentId')
