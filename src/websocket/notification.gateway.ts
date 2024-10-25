@@ -6,6 +6,7 @@ import {
 import { Server, Socket } from 'socket.io';
 
 @WebSocketGateway(8800, {
+  namespace: '/ws',
   cors: {
     origin: ['http://localhost:3001'],
     credentials: true,
