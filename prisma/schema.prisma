@@ -9,19 +9,19 @@ datasource db {
 }
 
 model User {
-  id           String       @id @default(uuid())
-  role         Role         @default(USER)
-  email        String       @unique
+  id           String         @id @default(uuid())
+  role         Role           @default(USER)
+  email        String         @unique
   password     String
-  nickname     String       @unique
+  nickname     String         @unique
   profileImage String?
   bio          String?
-  createdAt    DateTime     @default(now())
-  updatedAt    DateTime     @updatedAt
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
   // 연결
-  report       Report[]     @relation("User_BookReport")
-  reportLikes  ReportLike[] @relation("User_BookReportLike")
-  notify       Notify?      @relation("notification")
+  report       Report[]       @relation("User_BookReport")
+  reportLikes  ReportLike[]   @relation("User_BookReportLike")
+  notification Notification[] @relation("notification")
   comments     Comment[]
 }
 
@@ -52,8 +52,19 @@ model Comment {
   replies Comment[] @relation("CommentToComment")
 }
 
-model Notify {
-  id     String @id @default(uuid())
+enum NotiType {
+  LIKE
+  COMMENT
+}
+
+model Notification {
+  id String @id @default(uuid())
+
+  type NotiType
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   // 연결
   userId String @unique
   user   User   @relation(fields: [userId], references: [id], name: "notification")

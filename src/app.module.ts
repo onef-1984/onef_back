@@ -18,7 +18,7 @@ import { UtilModule } from './util/util.module';
 import { ReportLikesModule } from './report-likes/report-likes.module';
 import { EditorsPickModule } from './editors-pick/editors-pick.module';
 import { CommentModule } from './comment/comment.module';
-import { NotificationModule } from './websocket/websocket.module';
+import { NotificationModule } from './notification/notification.module';
 
 @Module({
   imports: [
