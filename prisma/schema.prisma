@@ -55,6 +55,7 @@ model Comment {
 enum NotiType {
   LIKE
   COMMENT
+  WELCOME
 }
 
 model Notification {

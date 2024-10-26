@@ -10,8 +10,8 @@ export class AuthRepository {
     return this.prisma.user.create({
       data: {
         ...signUpDto,
-        notify: {
-          create: {},
+        notification: {
+          create: { type: 'WELCOME' },
         },
       },
       omit: { createdAt: true, updatedAt: true, password: true },
