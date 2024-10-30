@@ -10,14 +10,12 @@ import {
 export class ReportService {
   constructor(private reportRepository: ReportRepository) {}
 
-  async createReport(createReportDto: CreateReportDto, email: string) {
+  createReport(createReportDto: CreateReportDto, email: string) {
     return this.reportRepository.createReport(createReportDto, email);
   }
 
-  async getReport(reportId: string) {
-    const report = await this.reportRepository.findReportById(reportId);
-
-    return report;
+  getReport(reportId: string) {
+    return this.reportRepository.findReportById(reportId);
   }
 
   async getReportListBySearch(query: SearchReportDto) {

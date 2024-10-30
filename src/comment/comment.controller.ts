@@ -19,11 +19,15 @@ import {
   PutCommentDto,
 } from './dto/request/comment.dto';
 import { AuthGuard } from 'src/auth/auth.guard';
+import { ReportService } from 'src/report/report.service';
+import { NotificationService } from 'src/notification/notification.service';
 
 @Controller('comments')
 export class CommentsController {
   constructor(
+    private reportService: ReportService,
     private commentService: CommentService,
+    private notificationService: NotificationService,
     private notificationGateway: NotificationGateway,
   ) {}
 
@@ -53,7 +57,31 @@ export class CommentsController {
       throw new InternalServerErrorException('댓글을 작성하지 못했습니다.');
     }
 
+    if (body.depth === 0) {
+      this.sendNotification(param.parentId, userId);
+    }
+
     return res;
+  }
+
+  async sendNotification(parentId, userId) {
+    // 댓글이 달리게 될 게시물 조회
+    const report = await this.reportService.getReport(parentId);
+
+    if (report.user.id !== userId) {
+      // 게시글 작성자의 알림 테이블에 알림 생성
+      const noti = await this.notificationService.createNotification(
+        report.user.id,
+        {
+          senderId: userId,
+          reportId: parentId,
+          type: 'NEW_COMMENT_ON_REPORT',
+        },
+      );
+
+      // 알림 보내기
+      this.notificationGateway.sendMessage(report.user.id, noti);
+    }
   }
 
   @Put(':parentId')

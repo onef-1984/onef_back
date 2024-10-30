@@ -32,6 +32,8 @@ import {
   PickType,
 } from '@nestjs/swagger';
 import { ReportListResponseDto } from './dto/response/report.dto';
+import { NotificationGateway } from 'src/notification/notification.gateway';
+import { NotificationService } from 'src/notification/notification.service';
 
 @ApiTags('Report')
 @Controller('report')
@@ -39,6 +41,8 @@ export class ReportController {
   constructor(
     private reportService: ReportService,
     private reportLikesService: ReportLikesService,
+    private notificationService: NotificationService,
+    private notificationGateway: NotificationGateway,
   ) {}
 
   @ApiOkResponse({
@@ -290,8 +294,22 @@ export class ReportController {
       try {
         await this.reportLikesService.postReportLike(reportId, userId);
 
+        const report = await this.reportService.getReport(reportId);
+
+        const noti = await this.notificationService.createNotification(
+          report.user.id,
+          {
+            senderId: userId,
+            reportId: reportId,
+            type: 'NEW_LIKE_ON_REPORT',
+          },
+        );
+
+        this.notificationGateway.sendMessage(report.user.id, noti);
+
         return { message: '좋아요 성공' };
       } catch (err) {
+        console.error(err);
         return { message: '이미 좋아요를 누르셨습니다.' };
       }
     }

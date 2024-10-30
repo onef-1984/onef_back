@@ -2,43 +2,59 @@ import {
   WebSocketGateway,
   WebSocketServer,
   SubscribeMessage,
+  OnGatewayDisconnect,
 } from '@nestjs/websockets';
+import { Notification } from '@prisma/client';
 import { Server, Socket } from 'socket.io';
+import * as dotenv from 'dotenv';
 
-@WebSocketGateway(8800, {
-  namespace: '/ws',
+dotenv.config();
+
+const PORT = process.env.WS_PORT;
+const NAMESPACE = process.env.WS_NAMESPACE;
+const ORIGIN = process.env.WS_ORIGIN;
+
+@WebSocketGateway(Number(PORT), {
+  namespace: NAMESPACE,
   cors: {
-    origin: ['http://localhost:3001'],
+    origin: [ORIGIN],
     credentials: true,
   },
 })
-export class NotificationGateway {
-  userMap: Map<string, string> = new Map();
+export class NotificationGateway implements OnGatewayDisconnect {
+  private clients: Map<string, Socket> = new Map();
 
   @WebSocketServer()
   server: Server;
 
-  sendMessage(userId: string, message: string) {
-    const clientId = this.userMap.get(userId);
-
-    const client = this.server.sockets.sockets.get(clientId);
+  sendMessage(userId: string, notification: Notification) {
+    const client = this.clients.get(userId);
 
     if (client) {
-      client.emit('notification', message);
+      console.log('emit ' + notification.type + ' to ' + userId);
+      client.emit('notification', notification);
+    } else {
+      console.log('Client not connected: ' + userId);
+    }
+  }
+
+  handleDisconnect(client: Socket) {
+    const userId = client.data.userId;
+
+    if (userId) {
+      this.clients.delete(userId);
+      console.log('userId ' + userId + ' disconnected');
     }
   }
 
   @SubscribeMessage('userConnect')
-  handleUserConnect(client: Socket, data: { id: string }) {
-    this.userMap.set(data.id, client.id);
+  handleUserConnect(client: Socket, data: { userId: string }) {
+    client.data.userId = data.userId;
+
+    this.clients.set(data.userId, client);
+
+    console.log('userId ' + client.data.userId + ' connected');
 
     return 'webSocket Connected';
-  }
-
-  @SubscribeMessage('userDisconnect')
-  handleUserDisconnect(client: Socket, data: { id: string }) {
-    this.userMap.delete(data.id);
-
-    return 'webSocket Disconnected';
   }
 }

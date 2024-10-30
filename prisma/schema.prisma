@@ -9,20 +9,21 @@ datasource db {
 }
 
 model User {
-  id           String         @id @default(uuid())
-  role         Role           @default(USER)
-  email        String         @unique
-  password     String
-  nickname     String         @unique
-  profileImage String?
-  bio          String?
-  createdAt    DateTime       @default(now())
-  updatedAt    DateTime       @updatedAt
+  id                   String         @id @default(uuid())
+  role                 Role           @default(USER)
+  email                String         @unique
+  password             String
+  nickname             String         @unique
+  profileImage         String?
+  bio                  String?
+  createdAt            DateTime       @default(now())
+  updatedAt            DateTime       @updatedAt
   // 연결
-  report       Report[]       @relation("User_BookReport")
-  reportLikes  ReportLike[]   @relation("User_BookReportLike")
-  notification Notification[] @relation("notification")
-  comments     Comment[]
+  report               Report[]       @relation("User_BookReport")
+  reportLikes          ReportLike[]   @relation("User_BookReportLike")
+  receivedNotification Notification[] @relation("notificationReceiver")
+  sentNotification     Notification[] @relation("notificationSender")
+  comments             Comment[]
 }
 
 enum Role {
@@ -53,22 +54,29 @@ model Comment {
 }
 
 enum NotiType {
-  LIKE
-  COMMENT
-  WELCOME
+  NEW_COMMENT_ON_REPORT
+  NEW_LIKE_ON_REPORT
+  NEW_REPORT_FROM_FOLLOWING
 }
 
 model Notification {
   id String @id @default(uuid())
 
-  type NotiType
+  type   NotiType
+  isRead Boolean  @default(false)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   // 연결
-  userId String @unique
-  user   User   @relation(fields: [userId], references: [id], name: "notification")
+  receiverId String
+  receiver   User   @relation(fields: [receiverId], references: [id], onDelete: Cascade, name: "notificationReceiver")
+
+  senderId String?
+  sender   User?   @relation(fields: [senderId], references: [id], onDelete: SetNull, name: "notificationSender")
+
+  reportId String?
+  report   Report? @relation(fields: [reportId], references: [id], onDelete: Cascade)
 }
 
 model ReportLike {
@@ -98,7 +106,8 @@ model Report {
   book        Book?        @relation(fields: [isbn13], references: [isbn13], onDelete: SetNull)
   editorsPick EditorsPick? @relation("EditorsPick")
 
-  comments Comment[]
+  comments     Comment[]
+  Notification Notification[]
 }
 
 model EditorsPick {
