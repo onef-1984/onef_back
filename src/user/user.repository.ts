@@ -28,9 +28,16 @@ export class UserRepository {
     return newUser;
   }
 
-  async getUserByNickname(userNickname: string) {
+  getUserByNickname(userNickname: string) {
     return this.prisma.user.findUnique({
       where: { nickname: userNickname },
+      omit: { password: true, createdAt: true, updatedAt: true },
+    });
+  }
+
+  getUserByEmail(email: string) {
+    return this.prisma.user.findUnique({
+      where: { email },
       omit: { password: true, createdAt: true, updatedAt: true },
     });
   }

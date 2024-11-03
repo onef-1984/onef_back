@@ -9,5 +9,6 @@ import { ReportModule } from 'src/report/report.module';
   controllers: [UserController],
   providers: [UserService, UserRepository],
   imports: [AuthModule, ReportModule],
+  exports: [UserService],
 })
 export class UserModule {}

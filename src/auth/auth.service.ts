@@ -94,4 +94,8 @@ export class AuthService {
       throw new BadRequestException('비밀번호가 일치하지 않습니다');
     }
   }
+
+  getUserByEmail(email: string) {
+    return this.authRepository.findUserByEmail(email);
+  }
 }

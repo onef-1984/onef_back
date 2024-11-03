@@ -41,7 +41,11 @@ export class UserService {
     }
   }
 
-  async getUserByNickname(userNickname: string) {
+  getUserByNickname(userNickname: string) {
     return this.userRepository.getUserByNickname(userNickname);
+  }
+
+  getUserByEmail(email: string) {
+    return this.userRepository.getUserByEmail(email);
   }
 }

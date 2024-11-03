@@ -1,8 +1,18 @@
-import { Body, Controller, Delete, Post, Res, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Post,
+  Req,
+  Res,
+  UseGuards,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { SignInDto, SignUpDto } from './auth.dto';
 import { Response } from 'express';
 import { AuthGuard } from './auth.guard';
+import { AuthGuard as Auth } from '@nestjs/passport';
 import {
   ApiCookieAuth,
   ApiCreatedResponse,
@@ -58,6 +68,65 @@ export class AuthController {
         sameSite: 'none',
       })
       .send({ message: '로그인 성공' });
+  }
+
+  @UseGuards(Auth('google'))
+  @Get('google')
+  async loginGoogle(@Req() req, @Res() res: Response) {
+    //1. 가입확인
+    const user = await this.authService.getUserByEmail(req.user.email);
+
+    const input = {
+      email: req.user.email,
+      password: 'OAuth',
+      nickname: req.user.firstName,
+    };
+
+    const { accessToken, refreshToken } = user
+      ? await this.authService.signIn(input)
+      : await this.authService.signup(input);
+
+    res
+      .cookie('accessToken', accessToken, {
+        httpOnly: true,
+        secure: true,
+        sameSite: 'none',
+      })
+      .cookie('refreshToken', refreshToken, {
+        httpOnly: true,
+        secure: true,
+        sameSite: 'none',
+      })
+      .redirect('http://localhost:3001');
+  }
+
+  @UseGuards(Auth('kakao'))
+  @Get('kakao')
+  async loginKakao(@Req() req, @Res() res: Response) {
+    const user = await this.authService.getUserByEmail(req.user.email);
+
+    const input = {
+      email: req.user.email,
+      password: 'OAuth',
+      nickname: req.user.username,
+    };
+
+    const { accessToken, refreshToken } = user
+      ? await this.authService.signIn(input)
+      : await this.authService.signup(input);
+
+    res
+      .cookie('accessToken', accessToken, {
+        httpOnly: true,
+        secure: true,
+        sameSite: 'none',
+      })
+      .cookie('refreshToken', refreshToken, {
+        httpOnly: true,
+        secure: true,
+        sameSite: 'none',
+      })
+      .redirect('http://localhost:3001');
   }
 
   @Delete('signout')
