@@ -26,6 +26,8 @@ import { baseConfig } from 'src/config/base.config';
 @ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
+  cookieOptions = { httpOnly: true, secure: true, sameSite: 'none' } as const;
+
   constructor(
     private readonly authService: AuthService,
     @Inject(baseConfig.KEY) private base: ConfigType<typeof baseConfig>,
@@ -40,16 +42,8 @@ export class AuthController {
       await this.authService.signup(signUpDto);
 
     res
-      .cookie('accessToken', accessToken, {
-        httpOnly: true,
-        secure: true,
-        sameSite: 'none',
-      })
-      .cookie('refreshToken', refreshToken, {
-        httpOnly: true,
-        secure: true,
-        sameSite: 'none',
-      })
+      .cookie('accessToken', accessToken, this.cookieOptions)
+      .cookie('refreshToken', refreshToken, this.cookieOptions)
       .status(201)
       .send({ message: '회원가입 성공' });
   }
@@ -63,22 +57,15 @@ export class AuthController {
       await this.authService.signIn(signInDto);
 
     res
-      .cookie('accessToken', accessToken, {
-        httpOnly: true,
-        secure: true,
-        sameSite: 'none',
-      })
-      .cookie('refreshToken', refreshToken, {
-        httpOnly: true,
-        secure: true,
-        sameSite: 'none',
-      })
+      .cookie('accessToken', accessToken, this.cookieOptions)
+      .cookie('refreshToken', refreshToken, this.cookieOptions)
       .send({ message: '로그인 성공' });
   }
 
   @UseGuards(Auth('google'))
   @Get('google')
   async loginGoogle(@Req() req, @Res() res: Response) {
+    console.log(req.user);
     //1. 가입확인
     const user = await this.authService.getUserByEmail(req.user.email);
 
@@ -93,16 +80,8 @@ export class AuthController {
       : await this.authService.signup(input);
 
     res
-      .cookie('accessToken', accessToken, {
-        httpOnly: true,
-        secure: true,
-        sameSite: 'none',
-      })
-      .cookie('refreshToken', refreshToken, {
-        httpOnly: true,
-        secure: true,
-        sameSite: 'none',
-      })
+      .cookie('accessToken', accessToken, this.cookieOptions)
+      .cookie('refreshToken', refreshToken, this.cookieOptions)
       .redirect(this.base.url);
   }
 
@@ -122,16 +101,8 @@ export class AuthController {
       : await this.authService.signup(input);
 
     res
-      .cookie('accessToken', accessToken, {
-        httpOnly: true,
-        secure: true,
-        sameSite: 'none',
-      })
-      .cookie('refreshToken', refreshToken, {
-        httpOnly: true,
-        secure: true,
-        sameSite: 'none',
-      })
+      .cookie('accessToken', accessToken, this.cookieOptions)
+      .cookie('refreshToken', refreshToken, this.cookieOptions)
       .redirect(this.base.url);
   }
 
