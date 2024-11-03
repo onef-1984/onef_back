@@ -26,7 +26,8 @@ import { baseConfig } from 'src/config/base.config';
 @ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService
+  constructor(
+    private readonly authService: AuthService,
     @Inject(baseConfig.KEY) private base: ConfigType<typeof baseConfig>,
   ) {}
 
