@@ -24,7 +24,7 @@ export class ReportLikesService {
 
   async getTopLikedReports() {
     const oneWeekAgo = new Date();
-    oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+    oneWeekAgo.setDate(oneWeekAgo.getDate() - 30);
 
     const likedReportIdList =
       await this.reportLikesRepository.getMostLikedReport(oneWeekAgo, 12);
