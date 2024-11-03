@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  Inject,
   Post,
   Req,
   Res,
@@ -19,11 +20,15 @@ import {
   ApiOkResponse,
   ApiTags,
 } from '@nestjs/swagger';
+import { ConfigType } from '@nestjs/config';
+import { baseConfig } from 'src/config/base.config';
 
 @ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(private readonly authService: AuthService
+    @Inject(baseConfig.KEY) private base: ConfigType<typeof baseConfig>,
+  ) {}
 
   @Post('signup')
   @ApiCreatedResponse({
@@ -97,7 +102,7 @@ export class AuthController {
         secure: true,
         sameSite: 'none',
       })
-      .redirect('http://localhost:3001');
+      .redirect(this.base.url);
   }
 
   @UseGuards(Auth('kakao'))
@@ -126,7 +131,7 @@ export class AuthController {
         secure: true,
         sameSite: 'none',
       })
-      .redirect('http://localhost:3001');
+      .redirect(this.base.url);
   }
 
   @Delete('signout')
