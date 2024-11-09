@@ -22,11 +22,43 @@ import {
 } from '@nestjs/swagger';
 import { ConfigType } from '@nestjs/config';
 import { baseConfig } from 'src/config/base.config';
+import { User } from '@prisma/client';
 
 @ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
   cookieOptions = { httpOnly: true, secure: true, sameSite: 'none' } as const;
+
+  async commentOauthLogic(
+    nickname: string,
+    req: { user: User },
+    res: Response,
+    serviceName: string,
+  ) {
+    const user = await this.authService.getUserByEmail(req.user.email);
+
+    const input = {
+      email: req.user.email,
+      password: 'OAuth',
+      nickname,
+    };
+    try {
+      const { accessToken, refreshToken } = user
+        ? await this.authService.signIn(input)
+        : await this.authService.signup(input);
+
+      res
+        .cookie('accessToken', accessToken, this.cookieOptions)
+        .cookie('refreshToken', refreshToken, this.cookieOptions)
+        .send({ message: `${serviceName} 로그인 성공` });
+    } catch (error) {
+      if (error.response.message === '비밀번호가 일치하지 않습니다') {
+        res.status(400).send({
+          message: `${req.user.email}\n계정이 이미 존재합니다.`,
+        });
+      }
+    }
+  }
 
   constructor(
     private readonly authService: AuthService,
@@ -64,46 +96,32 @@ export class AuthController {
 
   @UseGuards(Auth('google'))
   @Get('google')
-  async loginGoogle(@Req() req, @Res() res: Response) {
-    console.log(req.user);
-    //1. 가입확인
-    const user = await this.authService.getUserByEmail(req.user.email);
-
-    const input = {
-      email: req.user.email,
-      password: 'OAuth',
-      nickname: req.user.firstName,
-    };
-
-    const { accessToken, refreshToken } = user
-      ? await this.authService.signIn(input)
-      : await this.authService.signup(input);
-
-    res
-      .cookie('accessToken', accessToken, this.cookieOptions)
-      .cookie('refreshToken', refreshToken, this.cookieOptions)
-      .redirect(this.base.url);
+  async googleAuth() {
+    return 'Google OAuth';
   }
 
   @UseGuards(Auth('kakao'))
   @Get('kakao')
-  async loginKakao(@Req() req, @Res() res: Response) {
-    const user = await this.authService.getUserByEmail(req.user.email);
+  async kakaoAuth() {
+    return 'kakao OAuth';
+  }
 
-    const input = {
-      email: req.user.email,
-      password: 'OAuth',
-      nickname: req.user.username,
-    };
+  @UseGuards(Auth('google'))
+  @Post('google/callback')
+  async loginGoogle(
+    @Req() req: { user: User & { firstName: string } },
+    @Res() res: Response,
+  ) {
+    this.commentOauthLogic(req.user.firstName, req, res, 'google');
+  }
 
-    const { accessToken, refreshToken } = user
-      ? await this.authService.signIn(input)
-      : await this.authService.signup(input);
-
-    res
-      .cookie('accessToken', accessToken, this.cookieOptions)
-      .cookie('refreshToken', refreshToken, this.cookieOptions)
-      .redirect(this.base.url);
+  @UseGuards(Auth('kakao'))
+  @Post('kakao/callback')
+  async loginKakao(
+    @Req() req: { user: User & { username: string } },
+    @Res() res: Response,
+  ) {
+    this.commentOauthLogic(req.user.username, req, res, 'kakao');
   }
 
   @Delete('signout')
