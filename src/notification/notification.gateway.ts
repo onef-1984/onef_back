@@ -8,13 +8,13 @@ import { Notification } from '@prisma/client';
 import { Server, Socket } from 'socket.io';
 import * as dotenv from 'dotenv';
 
+// there is no other way to use process.env in the decorator
 dotenv.config();
 
-const PORT = process.env.WS_PORT;
 const NAMESPACE = process.env.WS_NAMESPACE;
 const ORIGIN = process.env.WS_ORIGIN;
 
-@WebSocketGateway(Number(PORT), {
+@WebSocketGateway({
   namespace: NAMESPACE,
   cors: {
     origin: [ORIGIN],
