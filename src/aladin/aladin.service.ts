@@ -1,19 +1,17 @@
 import { Injectable } from '@nestjs/common';
 import { AladinRepository } from './aladin.repository';
-import { AladinBookListDto, IsbnDto } from './dto/req/aladin.dto';
+import { AladinSearchInput } from './aladin.schema';
 import { BookRepository } from 'src/book/book.repository';
-import { UtilService } from 'src/util/util.service';
 
 @Injectable()
 export class AladinService {
   constructor(
     private aladinRepository: AladinRepository,
     private bookRepository: BookRepository,
-    private utilService: UtilService,
   ) {}
 
   // 검색
-  async getBookListByKeyWord(aladinBookListDto: AladinBookListDto) {
+  async getBookListByKeyWord(aladinBookListDto: AladinSearchInput) {
     const { totalResults, startIndex, itemsPerPage, item } =
       await this.aladinRepository.getBookListByKeyWord(aladinBookListDto);
 
@@ -55,52 +53,15 @@ export class AladinService {
   }
 
   // 상세 조회
-  async getBookDetailByIsbn(isbnDto: IsbnDto) {
+  async getBookDetailByIsbn(isbn: string) {
     // 이미 존재하는 책이라면 DB에서 조줌해서 보내줌
-    const res = await this.bookRepository.findBookById(isbnDto.isbn);
+    const res = await this.bookRepository.findBookById(isbn);
 
-    if (res) {
-      return res;
-    }
+    if (res) return res;
 
     // 존재하지 않는 책이라면 알라딘 API에서 조회해서 보내줌
-    const { item } = await this.aladinRepository.getBookDetailByIsbn(isbnDto);
+    const { item } = await this.aladinRepository.getBookDetailByIsbn(isbn);
 
-    const result = item[0];
-
-    const {
-      isbn13,
-      title,
-      author,
-      pubDate,
-      description,
-      cover,
-      categoryId,
-      categoryName,
-      publisher,
-      priceStandard,
-      customerReviewRank,
-      subInfo: { subTitle, originalTitle, itemPage, packing },
-    } = result;
-
-    return {
-      isbn13,
-      title,
-      author,
-      description,
-      cover,
-      categoryId,
-      categoryName,
-      pubDate,
-      publisher,
-      priceStandard,
-      customerReviewRank,
-      subInfo: {
-        subTitle,
-        originalTitle,
-        itemPage,
-        ...this.utilService.omit(packing, ['styleDesc']),
-      },
-    };
+    return item[0];
   }
 }

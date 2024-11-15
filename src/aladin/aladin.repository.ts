@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { GetBookDetail, GetBookList } from './aladin.type';
-import { AladinBookListDto, IsbnDto } from './dto/req/aladin.dto';
+import { GetBookList } from './aladin.type';
+import { AladinSearchInput } from './aladin.schema';
+import { Book } from 'src/book/book.schema';
 
 @Injectable()
 export class AladinRepository {
@@ -8,7 +9,7 @@ export class AladinRepository {
     keyword,
     skip,
     take,
-  }: AladinBookListDto): Promise<GetBookList> {
+  }: AladinSearchInput): Promise<GetBookList> {
     const result = await fetch(
       `http://www.aladin.co.kr/ttb/api/ItemSearch.aspx?ttbkey=ttbwpfekdml1340001&Query=${keyword}&QueryType=Keyword&MaxResults=${take}&start=${skip}&SearchTarget=Book&cover=big&output=js&Version=20131101`,
     );
@@ -18,9 +19,9 @@ export class AladinRepository {
     return data;
   }
 
-  async getBookDetailByIsbn({ isbn }: IsbnDto): Promise<GetBookDetail> {
+  async getBookDetailByIsbn(isbn13: string): Promise<{ item: Book }> {
     const result = await fetch(
-      `http://www.aladin.co.kr/ttb/api/ItemLookUp.aspx?ttbkey=ttbwpfekdml1340001&itemIdType=ISBN&cover=big&ItemId=${isbn}&output=js&Version=20131101&OptResult=packing`,
+      `http://www.aladin.co.kr/ttb/api/ItemLookUp.aspx?ttbkey=ttbwpfekdml1340001&itemIdType=ISBN&cover=big&ItemId=${isbn13}&output=js&Version=20131101&OptResult=packing`,
     );
 
     const data = await result.json();

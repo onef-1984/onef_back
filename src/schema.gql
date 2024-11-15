@@ -2,7 +2,7 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
-type SubInfo {
+type SubInfoObject {
   subTitle: String!
   originalTitle: String!
   itemPage: Float!
@@ -12,7 +12,7 @@ type SubInfo {
   sizeWidth: Float!
 }
 
-type Book {
+type BookObject {
   isbn13: String!
   title: String!
   author: String!
@@ -24,19 +24,64 @@ type Book {
   publisher: String!
   priceStandard: Float!
   customerReviewRank: Float!
-  subInfo: [SubInfo!]!
+  subInfo: SubInfoObject!
 }
 
-type Query {
-  getBook(isbn13: String!): Book!
-  getBooks(isbn13s: [String!]!): [Book!]!
+type Item {
+  isbn13: String!
+  title: String!
+  author: String!
+  pubDate: String!
+  description: String!
+  cover: String!
+  categoryId: Int!
+  categoryName: String!
+  publisher: String!
+  customerReviewRank: Int!
 }
 
-type Mutation {
-  patchBook(input: BookInput!): Book!
+type AladinSearchResult {
+  hasNext: Boolean!
+  items: [Item!]!
+}
+
+input SubInfoInput {
+  subTitle: String!
+  originalTitle: String!
+  itemPage: Float!
+  weight: Float!
+  sizeDepth: Float!
+  sizeHeight: Float!
+  sizeWidth: Float!
 }
 
 input BookInput {
   isbn13: String!
-  title: String
+  title: String!
+  author: String!
+  description: String!
+  cover: String!
+  categoryId: Float!
+  categoryName: String!
+  pubDate: String!
+  publisher: String!
+  priceStandard: Float!
+  customerReviewRank: Float!
+  subInfo: SubInfoInput!
+}
+
+type Query {
+  getBook(isbn13: String!): BookObject!
+  getBookList(aladinSearchInput: AladinSearchInput!): AladinSearchResult!
+  getBookDetail(isbn13: String!): BookObject!
+}
+
+input AladinSearchInput {
+  keyword: String!
+  skip: String!
+  take: String!
+}
+
+type Mutation {
+  createBook(bookInput: BookInput!): BookObject!
 }

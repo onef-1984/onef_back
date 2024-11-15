@@ -1,11 +1,6 @@
 import { ApiProperty, PickType } from '@nestjs/swagger';
-import { CreateBookDto } from 'src/book/book.dto';
+import { Book } from '@prisma/client';
 import { UserResponseDto } from 'src/user/user.dto';
-
-export class Book extends PickType(CreateBookDto, [
-  'title',
-  'cover',
-] as const) {}
 
 export class User extends PickType(UserResponseDto, [
   'id',
