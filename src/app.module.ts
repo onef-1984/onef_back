@@ -19,9 +19,18 @@ import { ReportLikesModule } from './report-likes/report-likes.module';
 import { EditorsPickModule } from './editors-pick/editors-pick.module';
 import { CommentModule } from './comment/comment.module';
 import { NotificationModule } from './notification/notification.module';
+import { ApolloDriverConfig, ApolloDriver } from '@nestjs/apollo';
+import { GraphQLModule } from '@nestjs/graphql';
+import { join } from 'path';
 
 @Module({
   imports: [
+    GraphQLModule.forRoot<ApolloDriverConfig>({
+      driver: ApolloDriver,
+      autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
+      playground: true,
+      path: '/api/graphql',
+    }),
     ConfigModule.forRoot({
       envFilePath: '.env',
       isGlobal: true,

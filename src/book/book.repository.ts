@@ -1,15 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { CreateBookDto, SubInfo } from './book.dto';
+import { CreateBookDto } from './book.dto';
 
 @Injectable()
 export class BookRepository {
   constructor(private prisma: PrismaService) {}
 
-  async createBook(book: Omit<CreateBookDto, 'subInfo'>, subInfo: SubInfo) {
+  async createBook({ subInfo, ...restData }: CreateBookDto) {
     return this.prisma.book.create({
       data: {
-        ...book,
+        ...restData,
         subInfo: {
           create: { ...subInfo },
         },

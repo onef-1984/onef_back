@@ -7,14 +7,14 @@ export class BookService {
   constructor(private bookRepository: BookRepository) {}
 
   async createBook(createBookDto: CreateBookDto) {
-    const { subInfo, ...book } = createBookDto;
-
-    const findBook = await this.bookRepository.findBookById(book.isbn13);
+    const findBook = await this.bookRepository.findBookById(
+      createBookDto.isbn13,
+    );
 
     if (findBook) {
-      return { isbn13: book.isbn13 };
+      return { isbn13: createBookDto.isbn13 };
     } else {
-      const { isbn13 } = await this.bookRepository.createBook(book, subInfo);
+      const { isbn13 } = await this.bookRepository.createBook(createBookDto);
       return { isbn13 };
     }
   }

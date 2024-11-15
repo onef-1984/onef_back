@@ -1,0 +1,42 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type SubInfo {
+  subTitle: String!
+  originalTitle: String!
+  itemPage: Float!
+  weight: Float!
+  sizeDepth: Float!
+  sizeHeight: Float!
+  sizeWidth: Float!
+}
+
+type Book {
+  isbn13: String!
+  title: String!
+  author: String!
+  description: String!
+  cover: String!
+  categoryId: Float!
+  categoryName: String!
+  pubDate: String!
+  publisher: String!
+  priceStandard: Float!
+  customerReviewRank: Float!
+  subInfo: [SubInfo!]!
+}
+
+type Query {
+  getBook(isbn13: String!): Book!
+  getBooks(isbn13s: [String!]!): [Book!]!
+}
+
+type Mutation {
+  patchBook(input: BookInput!): Book!
+}
+
+input BookInput {
+  isbn13: String!
+  title: String
+}

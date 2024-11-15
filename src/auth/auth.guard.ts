@@ -1,4 +1,3 @@
-import { Request } from 'express';
 import { Observable } from 'rxjs';
 import {
   CanActivate,
@@ -7,20 +6,33 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
+import { GqlExecutionContext } from '@nestjs/graphql';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
   constructor(private authService: AuthService) {}
 
   canActivate(
-    context: ExecutionContext,
+    context: GqlExecutionContext,
   ): boolean | Promise<boolean> | Observable<boolean> {
-    const request = context.switchToHttp().getRequest();
+    const type = context.getType();
+    let request;
+
+    switch (type) {
+      case 'http':
+        request = (context as ExecutionContext).switchToHttp().getRequest();
+        break;
+
+      case 'graphql':
+        const { req } = GqlExecutionContext.create(context).getContext();
+        request = req;
+        break;
+    }
 
     return this.validateRequest(request);
   }
 
-  private validateRequest(request: Request) {
+  private validateRequest(request) {
     const accessToken = request.cookies['accessToken'];
 
     if (!accessToken) return false;
