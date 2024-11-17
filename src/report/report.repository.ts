@@ -1,17 +1,17 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import {
-  CreateReportDto,
+  ReportInput,
+  ReportUpdateInput,
   SearchReportDto,
-  UpdateReportDto,
-} from './dto/request/report.dto';
+} from './report.schema';
 
 @Injectable()
 export class ReportRepository {
   constructor(private prisma: PrismaService) {}
 
-  async createReport(createReportDto: CreateReportDto, email: string) {
-    const { isbn13, ...data } = createReportDto;
+  async createReport(reportInput: ReportInput, email: string) {
+    const { isbn13, ...data } = reportInput;
 
     const newReport = await this.prisma.report.create({
       data: {
@@ -83,13 +83,6 @@ export class ReportRepository {
       include: {
         book: {
           include: { subInfo: { select: { itemPage: true } } },
-          omit: {
-            subInfoId: true,
-            categoryId: true,
-            priceStandard: true,
-            createdAt: true,
-            updatedAt: true,
-          },
         },
         user: {
           select: { id: true, nickname: true },
@@ -102,10 +95,10 @@ export class ReportRepository {
     });
   }
 
-  async updateReport(updateReportDto: UpdateReportDto, reportId: string) {
+  async updateReport(reportUpdateInput: ReportUpdateInput, reportId: string) {
     return this.prisma.report.update({
       where: { id: reportId },
-      data: updateReportDto,
+      data: reportUpdateInput,
     });
   }
 

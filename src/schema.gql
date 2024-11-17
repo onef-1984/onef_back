@@ -31,18 +31,35 @@ type BookSearchResult {
   items: [Item!]!
 }
 
+type User {
+  id: String!
+  role: UserRole!
+  email: String!
+  nickname: String!
+  profileImage: String!
+  bio: String!
+}
+
+"""The roles of the user"""
+enum UserRole {
+  ADMIN
+  USER
+}
+
 type Count {
   userLiked: Int!
 }
 
-type ReportList {
+type Report {
   id: String!
   title: String!
   content: String!
+  tags: [String!]
   createdAt: DateTime!
   updatedAt: DateTime!
-  count: Count!
+  _count: Count!
   book: BookObject!
+  user: User!
 }
 
 """
@@ -56,12 +73,12 @@ type BookObject {
   author: String!
   description: String!
   cover: String!
-  categoryId: Float!
+  categoryId: Int!
   categoryName: String!
   pubDate: String!
   publisher: String!
-  priceStandard: Float!
-  customerReviewRank: Float!
+  priceStandard: Int!
+  customerReviewRank: Int!
   subInfo: SubInfoObject!
 }
 
@@ -76,6 +93,7 @@ input SubInfoInput {
 }
 
 type Query {
+  getReport(reportId: String!): Report!
   getBook(isbn13: String!): BookObject!
   getBookList(bookSearchInput: BookSearchInput!): BookSearchResult!
 }
@@ -87,7 +105,9 @@ input BookSearchInput {
 }
 
 type Mutation {
-  createReport(reportInput: ReportInput!): ReportList!
+  createReport(reportInput: ReportInput!): Report!
+  deleteReport(reportId: String!): Report!
+  updateReport(reportUpdateInput: ReportUpdateInput!, reportId: String!): Report!
   createBook(bookInput: BookInput!): BookObject!
 }
 
@@ -98,17 +118,23 @@ input ReportInput {
   tags: [String!]
 }
 
+input ReportUpdateInput {
+  title: String
+  content: String
+  tags: [String!]
+}
+
 input BookInput {
   isbn13: String!
   title: String!
   author: String!
   description: String!
   cover: String!
-  categoryId: Float!
+  categoryId: Int!
   categoryName: String!
   pubDate: String!
   publisher: String!
-  priceStandard: Float!
-  customerReviewRank: Float!
+  priceStandard: Int!
+  customerReviewRank: Int!
   subInfo: SubInfoInput!
 }

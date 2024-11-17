@@ -1,17 +1,17 @@
-import { Injectable } from '@nestjs/common';
+import { ForbiddenException, Injectable } from '@nestjs/common';
 import { ReportRepository } from './report.repository';
 import {
-  CreateReportDto,
+  ReportInput,
+  ReportUpdateInput,
   SearchReportDto,
-  UpdateReportDto,
-} from './dto/request/report.dto';
+} from './report.schema';
 
 @Injectable()
 export class ReportService {
   constructor(private reportRepository: ReportRepository) {}
 
-  createReport(createReportDto: CreateReportDto, email: string) {
-    return this.reportRepository.createReport(createReportDto, email);
+  createReport(reportInput: ReportInput, email: string) {
+    return this.reportRepository.createReport(reportInput, email);
   }
 
   getReport(reportId: string) {
@@ -70,7 +70,8 @@ export class ReportService {
   async checkIsOwner(reportId: string, userId: string) {
     const targetReport = await this.reportRepository.findReportById(reportId);
 
-    if (targetReport?.user.id !== userId) return false;
+    if (targetReport?.user.id !== userId)
+      throw new ForbiddenException('권한이 없습니다.');
     else return true;
   }
 
@@ -78,7 +79,7 @@ export class ReportService {
     return await this.reportRepository.deleteReport(reportId);
   }
 
-  async updateReport(updateReportDto: UpdateReportDto, reportId: string) {
-    return this.reportRepository.updateReport(updateReportDto, reportId);
+  async updateReport(reportUpdateInput: ReportUpdateInput, reportId: string) {
+    return this.reportRepository.updateReport(reportUpdateInput, reportId);
   }
 }

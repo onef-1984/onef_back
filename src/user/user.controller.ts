@@ -23,7 +23,6 @@ import {
   ApiOkResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { UserResponseDto } from './user.dto';
 
 @ApiTags('User')
 @Controller('user')
@@ -33,10 +32,6 @@ export class UserController {
     private authService: AuthService,
   ) {}
 
-  @ApiOkResponse({
-    description: '내 정보 조회',
-    type: UserResponseDto,
-  })
   @Get('me')
   @UseGuards(AuthGuard)
   async getMe(@Req() req: Request) {
@@ -45,10 +40,6 @@ export class UserController {
     return await this.userService.getUserByNickname(nickname);
   }
 
-  @ApiOkResponse({
-    description: '유저 정보 조회',
-    type: UserResponseDto,
-  })
   @ApiNotFoundResponse({
     description: '존재하지 않는 유저',
     schema: {

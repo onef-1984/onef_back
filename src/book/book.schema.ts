@@ -6,7 +6,7 @@ import {
   ValidateNested,
 } from 'class-validator';
 import { Type } from 'class-transformer';
-import { Field, InputType, ObjectType } from '@nestjs/graphql';
+import { Field, InputType, Int, ObjectType } from '@nestjs/graphql';
 
 @InputType('SubInfoInput')
 @ObjectType('SubInfoObject')
@@ -68,7 +68,7 @@ export class Book {
   @IsString()
   cover: string;
 
-  @Field()
+  @Field(() => Int)
   @IsNotEmpty()
   @IsNumber()
   categoryId: number;
@@ -90,76 +90,12 @@ export class Book {
 
   @IsNotEmpty()
   @IsNumber()
-  @Field()
+  @Field(() => Int)
   priceStandard: number;
 
   @IsNotEmpty()
   @IsNumber()
-  @Field()
-  customerReviewRank: number;
-
-  @Field(() => SubInfo)
-  @IsNotEmpty()
-  @ValidateNested()
-  @Type(() => SubInfo)
-  subInfo: SubInfo;
-}
-
-@ObjectType({ isAbstract: true })
-export class BookSC {
-  @Field()
-  @IsNotEmpty()
-  @IsString()
-  isbn13: string;
-
-  @Field()
-  @IsNotEmpty()
-  @IsString()
-  title: string;
-
-  @Field()
-  @IsNotEmpty()
-  @IsString()
-  author: string;
-
-  @Field()
-  @IsOptional()
-  @IsString()
-  description: string;
-
-  @Field()
-  @IsOptional()
-  @IsString()
-  cover: string;
-
-  @Field()
-  @IsNotEmpty()
-  @IsNumber()
-  categoryId: number;
-
-  @Field()
-  @IsNotEmpty()
-  @IsString()
-  categoryName: string;
-
-  @IsNotEmpty()
-  @IsString()
-  @Field()
-  pubDate: string;
-
-  @IsNotEmpty()
-  @IsString()
-  @Field()
-  publisher: string;
-
-  @IsNotEmpty()
-  @IsNumber()
-  @Field()
-  priceStandard: number;
-
-  @IsNotEmpty()
-  @IsNumber()
-  @Field()
+  @Field(() => Int)
   customerReviewRank: number;
 
   @Field(() => SubInfo)
