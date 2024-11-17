@@ -12,6 +12,44 @@ type SubInfoObject {
   sizeWidth: Float!
 }
 
+type Item {
+  isbn13: String!
+  title: String!
+  author: String!
+  description: String!
+  cover: String!
+  categoryId: Float!
+  categoryName: String!
+  pubDate: String!
+  publisher: String!
+  priceStandard: Float!
+  customerReviewRank: Float!
+}
+
+type BookSearchResult {
+  hasNext: Boolean!
+  items: [Item!]!
+}
+
+type Count {
+  userLiked: Int!
+}
+
+type ReportList {
+  id: String!
+  title: String!
+  content: String!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  count: Count!
+  book: BookObject!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
 type BookObject {
   isbn13: String!
   title: String!
@@ -27,24 +65,6 @@ type BookObject {
   subInfo: SubInfoObject!
 }
 
-type Item {
-  isbn13: String!
-  title: String!
-  author: String!
-  pubDate: String!
-  description: String!
-  cover: String!
-  categoryId: Int!
-  categoryName: String!
-  publisher: String!
-  customerReviewRank: Int!
-}
-
-type AladinSearchResult {
-  hasNext: Boolean!
-  items: [Item!]!
-}
-
 input SubInfoInput {
   subTitle: String!
   originalTitle: String!
@@ -53,6 +73,29 @@ input SubInfoInput {
   sizeDepth: Float!
   sizeHeight: Float!
   sizeWidth: Float!
+}
+
+type Query {
+  getBook(isbn13: String!): BookObject!
+  getBookList(bookSearchInput: BookSearchInput!): BookSearchResult!
+}
+
+input BookSearchInput {
+  keyword: String!
+  skip: Float!
+  take: Float!
+}
+
+type Mutation {
+  createReport(reportInput: ReportInput!): ReportList!
+  createBook(bookInput: BookInput!): BookObject!
+}
+
+input ReportInput {
+  isbn13: String!
+  title: String!
+  content: String!
+  tags: [String!]
 }
 
 input BookInput {
@@ -68,20 +111,4 @@ input BookInput {
   priceStandard: Float!
   customerReviewRank: Float!
   subInfo: SubInfoInput!
-}
-
-type Query {
-  getBook(isbn13: String!): BookObject!
-  getBookList(aladinSearchInput: AladinSearchInput!): AladinSearchResult!
-  getBookDetail(isbn13: String!): BookObject!
-}
-
-input AladinSearchInput {
-  keyword: String!
-  skip: String!
-  take: String!
-}
-
-type Mutation {
-  createBook(bookInput: BookInput!): BookObject!
 }

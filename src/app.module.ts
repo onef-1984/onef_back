@@ -7,7 +7,6 @@ import { ConfigModule } from '@nestjs/config';
 import { jwtConfig } from './config/jwt.config';
 import { BookModule } from './book/book.module';
 import { validationSchema } from './config/validationSchema';
-import { AladinModule } from './aladin/aladin.module';
 import { AppController } from './app.controller';
 import { RefreshMiddleware } from './middleware/refresh.middleware';
 import { MiddlewareModule } from './middleware/middleware.module';
@@ -42,7 +41,6 @@ import { join } from 'path';
     ReportModule,
     UserModule,
     BookModule,
-    AladinModule,
     MiddlewareModule,
     ImageModule,
     UtilModule,

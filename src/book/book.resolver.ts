@@ -1,6 +1,6 @@
 import { Resolver, Query, Args, Mutation } from '@nestjs/graphql';
 import { BookService } from './book.service';
-import { Book } from './book.schema';
+import { BookSearchInput, BookSearchResult, Book } from './book.schema';
 
 @Resolver()
 export class BookResolver {
@@ -8,7 +8,12 @@ export class BookResolver {
 
   @Query(() => Book)
   async getBook(@Args('isbn13') isbn13: string) {
-    return this.bookService.findBookById(isbn13);
+    return this.bookService.getBookByIsbn(isbn13);
+  }
+
+  @Query(() => BookSearchResult)
+  getBookList(@Args('bookSearchInput') args: BookSearchInput) {
+    return this.bookService.getBookListByKeyWord(args);
   }
 
   @Mutation(() => Book)

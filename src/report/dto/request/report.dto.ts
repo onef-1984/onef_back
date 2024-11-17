@@ -1,3 +1,4 @@
+import { Field, InputType } from '@nestjs/graphql';
 import { ApiProperty, OmitType } from '@nestjs/swagger';
 import {
   IsIn,
@@ -7,24 +8,29 @@ import {
   IsString,
 } from 'class-validator';
 
+@InputType('ReportInput')
 export class CreateReportDto {
   @IsNotEmpty()
   @IsISBN()
   @ApiProperty()
+  @Field()
   isbn13: string;
 
   @IsNotEmpty()
   @IsString()
   @ApiProperty()
+  @Field()
   title: string;
 
   @IsNotEmpty()
   @IsString()
   @ApiProperty()
+  @Field()
   content: string;
 
   @IsOptional()
   @ApiProperty()
+  @Field(() => [String], { nullable: true })
   tags: string[];
 }
 

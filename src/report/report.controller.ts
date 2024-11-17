@@ -309,7 +309,6 @@ export class ReportController {
 
         return { message: '좋아요 성공' };
       } catch (err) {
-        console.error(err);
         return { message: '이미 좋아요를 누르셨습니다.' };
       }
     }

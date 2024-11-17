@@ -40,8 +40,8 @@ class SubInfo {
   sizeWidth: number;
 }
 
-@InputType('BookInput')
-@ObjectType('BookObject')
+@InputType('BookInput', { isAbstract: true })
+@ObjectType('BookObject', { isAbstract: true })
 export class Book {
   @Field()
   @IsNotEmpty()
@@ -78,24 +78,24 @@ export class Book {
   @IsString()
   categoryName: string;
 
-  @Field()
   @IsNotEmpty()
   @IsString()
+  @Field()
   pubDate: string;
 
-  @Field()
   @IsNotEmpty()
   @IsString()
+  @Field()
   publisher: string;
 
-  @Field()
   @IsNotEmpty()
   @IsNumber()
+  @Field()
   priceStandard: number;
 
-  @Field()
   @IsNotEmpty()
   @IsNumber()
+  @Field()
   customerReviewRank: number;
 
   @Field(() => SubInfo)
@@ -103,4 +103,153 @@ export class Book {
   @ValidateNested()
   @Type(() => SubInfo)
   subInfo: SubInfo;
+}
+
+@ObjectType({ isAbstract: true })
+export class BookSC {
+  @Field()
+  @IsNotEmpty()
+  @IsString()
+  isbn13: string;
+
+  @Field()
+  @IsNotEmpty()
+  @IsString()
+  title: string;
+
+  @Field()
+  @IsNotEmpty()
+  @IsString()
+  author: string;
+
+  @Field()
+  @IsOptional()
+  @IsString()
+  description: string;
+
+  @Field()
+  @IsOptional()
+  @IsString()
+  cover: string;
+
+  @Field()
+  @IsNotEmpty()
+  @IsNumber()
+  categoryId: number;
+
+  @Field()
+  @IsNotEmpty()
+  @IsString()
+  categoryName: string;
+
+  @IsNotEmpty()
+  @IsString()
+  @Field()
+  pubDate: string;
+
+  @IsNotEmpty()
+  @IsString()
+  @Field()
+  publisher: string;
+
+  @IsNotEmpty()
+  @IsNumber()
+  @Field()
+  priceStandard: number;
+
+  @IsNotEmpty()
+  @IsNumber()
+  @Field()
+  customerReviewRank: number;
+
+  @Field(() => SubInfo)
+  @IsNotEmpty()
+  @ValidateNested()
+  @Type(() => SubInfo)
+  subInfo: SubInfo;
+}
+
+@ObjectType()
+export class Item {
+  @Field()
+  @IsNotEmpty()
+  @IsString()
+  isbn13: string;
+
+  @Field()
+  @IsNotEmpty()
+  @IsString()
+  title: string;
+
+  @Field()
+  @IsNotEmpty()
+  @IsString()
+  author: string;
+
+  @Field()
+  @IsOptional()
+  @IsString()
+  description: string;
+
+  @Field()
+  @IsOptional()
+  @IsString()
+  cover: string;
+
+  @Field()
+  @IsNotEmpty()
+  @IsNumber()
+  categoryId: number;
+
+  @Field()
+  @IsNotEmpty()
+  @IsString()
+  categoryName: string;
+
+  @IsNotEmpty()
+  @IsString()
+  @Field()
+  pubDate: string;
+
+  @IsNotEmpty()
+  @IsString()
+  @Field()
+  publisher: string;
+
+  @IsNotEmpty()
+  @IsNumber()
+  @Field()
+  priceStandard: number;
+
+  @IsNotEmpty()
+  @IsNumber()
+  @Field()
+  customerReviewRank: number;
+}
+
+@InputType()
+export class BookSearchInput {
+  @Field()
+  @IsString()
+  @IsNotEmpty()
+  keyword: string;
+
+  @Field()
+  @IsNumber()
+  @IsNotEmpty()
+  skip: number;
+
+  @Field()
+  @IsNumber()
+  @IsNotEmpty()
+  take: number;
+}
+
+@ObjectType()
+export class BookSearchResult {
+  @Field()
+  hasNext: boolean;
+
+  @Field(() => [Item])
+  items: Array<Item>;
 }

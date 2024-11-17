@@ -6,10 +6,11 @@ import { AuthModule } from 'src/auth/auth.module';
 import { UtilModule } from 'src/util/util.module';
 import { ReportLikesModule } from 'src/report-likes/report-likes.module';
 import { NotificationModule } from 'src/notification/notification.module';
+import { ReportResolver } from './report.resolver';
 
 @Module({
   controllers: [ReportController],
-  providers: [ReportService, ReportRepository],
+  providers: [ReportService, ReportRepository, ReportResolver],
   imports: [AuthModule, UtilModule, ReportLikesModule, NotificationModule],
   exports: [ReportService, ReportRepository],
 })

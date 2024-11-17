@@ -1,5 +1,6 @@
+import { Field, Int, ObjectType } from '@nestjs/graphql';
 import { ApiProperty, PickType } from '@nestjs/swagger';
-import { Book } from '@prisma/client';
+import { Book } from 'src/book/book.schema';
 import { UserResponseDto } from 'src/user/user.dto';
 
 export class User extends PickType(UserResponseDto, [
@@ -7,35 +8,46 @@ export class User extends PickType(UserResponseDto, [
   'nickname',
 ] as const) {}
 
+@ObjectType()
 export class Count {
   @ApiProperty()
+  @Field(() => Int)
   userLiked: number;
 }
 
+@ObjectType()
 export class ReportList {
+  @Field()
   @ApiProperty()
   id: string;
 
   @ApiProperty()
+  @Field()
   title: string;
 
   @ApiProperty()
+  @Field()
   content: string;
 
   @ApiProperty()
+  @Field()
   createdAt: Date;
 
   @ApiProperty()
+  @Field()
   updatedAt: Date;
 
+  @Field(() => Count)
   @ApiProperty()
   count: Count;
 
   @ApiProperty()
+  @Field(() => Book)
   book: Book;
 
-  @ApiProperty()
-  user: User;
+  // @ApiProperty()
+  // @Field(() => User)
+  // user: User;
 }
 
 export class ReportListResponseDto {
