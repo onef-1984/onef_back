@@ -1,9 +1,9 @@
-import { ForbiddenException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { ReportRepository } from './report.repository';
 import {
   ReportInput,
   ReportUpdateInput,
-  SearchReportDto,
+  SearchReportInput,
 } from './report.schema';
 
 @Injectable()
@@ -18,7 +18,7 @@ export class ReportService {
     return this.reportRepository.findReportById(reportId);
   }
 
-  async getReportListBySearch(query: SearchReportDto) {
+  async getReportListBySearch(query: SearchReportInput) {
     function getWhere(searchType: string) {
       switch (searchType) {
         case 'report':
@@ -57,6 +57,7 @@ export class ReportService {
 
     const totalResults =
       await this.reportRepository.getReportListBySearch_Count(where);
+
     const items = await this.reportRepository.getReportListBySearch(
       query,
       where,
@@ -70,8 +71,7 @@ export class ReportService {
   async checkIsOwner(reportId: string, userId: string) {
     const targetReport = await this.reportRepository.findReportById(reportId);
 
-    if (targetReport?.user.id !== userId)
-      throw new ForbiddenException('권한이 없습니다.');
+    if (targetReport?.user.id !== userId) return false;
     else return true;
   }
 

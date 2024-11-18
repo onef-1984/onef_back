@@ -2,6 +2,10 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type Message {
+  message: String!
+}
+
 type SubInfoObject {
   subTitle: String!
   originalTitle: String!
@@ -82,6 +86,19 @@ type BookObject {
   subInfo: SubInfoObject!
 }
 
+type ReportList {
+  items: [Report!]!
+}
+
+type ReportListWithHasNext {
+  hasNext: Boolean!
+  items: [Report!]!
+}
+
+type IsLiked {
+  isLiked: Boolean!
+}
+
 input SubInfoInput {
   subTitle: String!
   originalTitle: String!
@@ -93,9 +110,35 @@ input SubInfoInput {
 }
 
 type Query {
-  getReport(reportId: String!): Report!
+  getReportListBySearch(query: SearchReportInput!): ReportListWithHasNext!
   getBook(isbn13: String!): BookObject!
   getBookList(bookSearchInput: BookSearchInput!): BookSearchResult!
+  getMostLikedReportList: ReportList!
+  getReport(reportId: String!): Report!
+  checkUserLikedReport(reportId: String!): IsLiked!
+}
+
+input SearchReportInput {
+  keyword: String!
+  orderBy: OrderBy!
+  searchType: SearchType!
+  take: Int!
+  skip: Int!
+}
+
+"""The order by of the report"""
+enum OrderBy {
+  createdAt
+  userLiked
+}
+
+"""The search type of the report"""
+enum SearchType {
+  report
+  book
+  tag
+  user
+  userLiked
 }
 
 input BookSearchInput {
@@ -106,16 +149,17 @@ input BookSearchInput {
 
 type Mutation {
   createReport(reportInput: ReportInput!): Report!
-  deleteReport(reportId: String!): Report!
   updateReport(reportUpdateInput: ReportUpdateInput!, reportId: String!): Report!
+  deleteReport(reportId: String!): Report!
   createBook(bookInput: BookInput!): BookObject!
+  toggleReportLike(reportId: String!): Message!
 }
 
 input ReportInput {
   isbn13: String!
   title: String!
   content: String!
-  tags: [String!]
+  tags: [String!]!
 }
 
 input ReportUpdateInput {

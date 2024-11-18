@@ -63,7 +63,7 @@ export class ReportLikesRepository {
       where: { id: { in: reportIds } },
       include: {
         book: true,
-        user: { omit: { createdAt: true, updatedAt: true, password: true } },
+        user: true,
         _count: {
           select: { userLiked: true },
         },

@@ -1,11 +1,13 @@
 import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { ReportService } from './report.service';
-import { ReportInput, ReportUpdateInput, Report } from './report.schema';
 import {
-  InternalServerErrorException,
-  NotFoundException,
-  UseGuards,
-} from '@nestjs/common';
+  ReportInput,
+  Report,
+  SearchReportInput,
+  ReportListWithHasNext,
+  ReportUpdateInput,
+} from './report.schema';
+import { UnauthorizedException, UseGuards } from '@nestjs/common';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { User } from '@prisma/client';
 
@@ -13,19 +15,9 @@ import { User } from '@prisma/client';
 export class ReportResolver {
   constructor(private reportService: ReportService) {}
 
-  @Query(() => Report)
-  async getReport(@Args('reportId') reportId: string) {
-    const res = await this.reportService.getReport(reportId);
-
-    console.log('res', res);
-
-    if (!res) {
-      throw new NotFoundException({
-        message: '해당 리포트가 없습니다.',
-      });
-    }
-
-    return res;
+  @Query(() => ReportListWithHasNext)
+  async getReportListBySearch(@Args('query') query: SearchReportInput) {
+    return this.reportService.getReportListBySearch(query);
   }
 
   @UseGuards(AuthGuard)
@@ -39,36 +31,33 @@ export class ReportResolver {
 
   @UseGuards(AuthGuard)
   @Mutation(() => Report)
-  async deleteReport(
+  async updateReport(
+    @Args('reportUpdateInput') reportUpdateInput: ReportUpdateInput,
     @Args('reportId') reportId: string,
-    @Context('req') { user: { id } }: { user: User },
+    @Context('req') { user: { id: userId } }: { user: User },
   ) {
-    try {
-      await this.reportService.checkIsOwner(reportId, id);
+    const isOwner = await this.reportService.checkIsOwner(reportId, userId);
 
-      return this.reportService.deleteReport(reportId);
-    } catch (e) {
-      throw new InternalServerErrorException({
-        message: '삭제 실패',
+    if (isOwner)
+      return this.reportService.updateReport(reportUpdateInput, reportId);
+    else
+      throw new UnauthorizedException({
+        message: '수정 권한이 없습니다',
       });
-    }
   }
 
   @UseGuards(AuthGuard)
   @Mutation(() => Report)
-  async updateReport(
-    @Args('reportUpdateInput') reportUpdateInput: ReportUpdateInput,
+  async deleteReport(
     @Args('reportId') reportId: string,
-    @Context('req') { user: { id } }: { user: User },
+    @Context('req') { user: { id: userId } }: { user: User },
   ) {
-    try {
-      await this.reportService.checkIsOwner(reportId, id);
+    const isOwner = await this.reportService.checkIsOwner(reportId, userId);
 
-      return this.reportService.updateReport(reportUpdateInput, reportId);
-    } catch (e) {
-      throw new InternalServerErrorException({
-        message: '삭제 실패',
+    if (isOwner) return this.reportService.deleteReport(reportId);
+    else
+      throw new UnauthorizedException({
+        message: '삭제 권한이 없습니다',
       });
-    }
   }
 }

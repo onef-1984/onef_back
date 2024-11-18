@@ -7,6 +7,7 @@ import {
 } from 'class-validator';
 import { Type } from 'class-transformer';
 import { Field, InputType, Int, ObjectType } from '@nestjs/graphql';
+import { HasNext } from 'src/util/util.schema';
 
 @InputType('SubInfoInput')
 @ObjectType('SubInfoObject')
@@ -182,10 +183,7 @@ export class BookSearchInput {
 }
 
 @ObjectType()
-export class BookSearchResult {
-  @Field()
-  hasNext: boolean;
-
+export class BookSearchResult extends HasNext {
   @Field(() => [Item])
   items: Array<Item>;
 }

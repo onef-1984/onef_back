@@ -3,7 +3,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import {
   ReportInput,
   ReportUpdateInput,
-  SearchReportDto,
+  SearchReportInput,
 } from './report.schema';
 
 @Injectable()
@@ -27,7 +27,13 @@ export class ReportRepository {
           },
         },
       },
-      select: { id: true },
+      include: {
+        book: true,
+        user: true,
+        _count: {
+          select: { userLiked: true },
+        },
+      },
     });
 
     return newReport;
@@ -40,26 +46,25 @@ export class ReportRepository {
   }
 
   async getReportListBySearch(
-    { orderBy, skip, take }: SearchReportDto,
+    { orderBy, skip, take }: SearchReportInput,
     where: any,
   ) {
     return await this.prisma.report.findMany({
       include: {
-        book: { select: { cover: true, title: true } },
-        user: { select: { id: true, nickname: true } },
+        book: true,
+        user: true,
         _count: {
           select: { userLiked: true },
         },
       },
-      omit: { userId: true, isbn13: true, tags: true },
       orderBy:
         orderBy === 'createdAt'
           ? { createdAt: 'desc' }
           : {
               userLiked: { _count: 'desc' },
             },
-      skip: Number(skip),
-      take: Number(take),
+      skip,
+      take,
       where,
     });
   }
@@ -81,17 +86,12 @@ export class ReportRepository {
         id: reportId,
       },
       include: {
-        book: {
-          include: { subInfo: { select: { itemPage: true } } },
-        },
-        user: {
-          select: { id: true, nickname: true },
-        },
+        book: true,
+        user: true,
         _count: {
           select: { userLiked: true },
         },
       },
-      omit: { isbn13: true, userId: true },
     });
   }
 

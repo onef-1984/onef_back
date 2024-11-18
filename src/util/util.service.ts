@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { UtilFnOmit, UtilFnPick } from './util.types';
+import { UtilFnOmit, UtilFnPick } from './util.schema';
 
 @Injectable()
 export class UtilService {
