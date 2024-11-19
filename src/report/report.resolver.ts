@@ -15,6 +15,11 @@ import { User } from '@prisma/client';
 export class ReportResolver {
   constructor(private reportService: ReportService) {}
 
+  @Query(() => Report)
+  async getReport(@Args('reportId') reportId: string) {
+    return this.reportService.getReport(reportId);
+  }
+
   @Query(() => ReportListWithHasNext)
   async getReportListBySearch(@Args('query') query: SearchReportInput) {
     return this.reportService.getReportListBySearch(query);

@@ -28,7 +28,11 @@ export class ReportRepository {
         },
       },
       include: {
-        book: true,
+        book: {
+          include: {
+            subInfo: true,
+          },
+        },
         user: true,
         _count: {
           select: { userLiked: true },
@@ -51,7 +55,11 @@ export class ReportRepository {
   ) {
     return await this.prisma.report.findMany({
       include: {
-        book: true,
+        book: {
+          include: {
+            subInfo: true,
+          },
+        },
         user: true,
         _count: {
           select: { userLiked: true },
@@ -86,7 +94,11 @@ export class ReportRepository {
         id: reportId,
       },
       include: {
-        book: true,
+        book: {
+          include: {
+            subInfo: true,
+          },
+        },
         user: true,
         _count: {
           select: { userLiked: true },

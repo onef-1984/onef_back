@@ -110,11 +110,11 @@ input SubInfoInput {
 }
 
 type Query {
+  getReport(reportId: String!): Report!
   getReportListBySearch(query: SearchReportInput!): ReportListWithHasNext!
   getBook(isbn13: String!): BookObject!
   getBookList(bookSearchInput: BookSearchInput!): BookSearchResult!
   getMostLikedReportList: ReportList!
-  getReport(reportId: String!): Report!
   checkUserLikedReport(reportId: String!): IsLiked!
 }
 

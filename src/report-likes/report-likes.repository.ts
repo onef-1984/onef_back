@@ -62,7 +62,11 @@ export class ReportLikesRepository {
     return await this.prisma.report.findMany({
       where: { id: { in: reportIds } },
       include: {
-        book: true,
+        book: {
+          include: {
+            subInfo: true,
+          },
+        },
         user: true,
         _count: {
           select: { userLiked: true },
