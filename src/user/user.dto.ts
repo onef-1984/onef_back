@@ -11,7 +11,7 @@ registerEnumType(UserRole, {
   description: 'The roles of the user',
 });
 
-@ObjectType('User')
+@ObjectType()
 export class User {
   @Field()
   id: string;
@@ -25,9 +25,9 @@ export class User {
   @Field()
   nickname: string;
 
-  @Field()
-  profileImage: string;
+  @Field({ nullable: true })
+  profileImage?: string;
 
-  @Field()
-  bio: string;
+  @Field({ nullable: true })
+  bio?: string;
 }

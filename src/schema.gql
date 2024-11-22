@@ -40,8 +40,8 @@ type User {
   role: UserRole!
   email: String!
   nickname: String!
-  profileImage: String!
-  bio: String!
+  profileImage: String
+  bio: String
 }
 
 """The roles of the user"""
@@ -99,6 +99,13 @@ type IsLiked {
   isLiked: Boolean!
 }
 
+type EditorsPick {
+  id: String!
+  description: String!
+  createdAt: String!
+  report: Report!
+}
+
 input SubInfoInput {
   subTitle: String!
   originalTitle: String!
@@ -112,10 +119,13 @@ input SubInfoInput {
 type Query {
   getReport(reportId: String!): Report!
   getReportListBySearch(query: SearchReportInput!): ReportListWithHasNext!
+  getMe: User!
+  getUser(userNickname: String!): User!
   getBook(isbn13: String!): BookObject!
   getBookList(bookSearchInput: BookSearchInput!): BookSearchResult!
   getMostLikedReportList: ReportList!
   checkUserLikedReport(reportId: String!): IsLiked!
+  getEditorsPick: EditorsPick!
 }
 
 input SearchReportInput {
@@ -151,8 +161,11 @@ type Mutation {
   createReport(reportInput: ReportInput!): Report!
   updateReport(reportUpdateInput: ReportUpdateInput!, reportId: String!): Report!
   deleteReport(reportId: String!): Report!
+  changeProfile(changeProfileInput: ChangeProfileInput!): Message!
+  changePassword(changePasswordDto: ChangePasswordInput!): Message!
   createBook(bookInput: BookInput!): BookObject!
   toggleReportLike(reportId: String!): Message!
+  createEditorsPick(reportId: String!, description: String!): Message!
 }
 
 input ReportInput {
@@ -166,6 +179,17 @@ input ReportUpdateInput {
   title: String
   content: String
   tags: [String!]
+}
+
+input ChangeProfileInput {
+  nickname: String
+  profileImage: String
+  bio: String
+}
+
+input ChangePasswordInput {
+  oldPassword: String!
+  newPassword: String!
 }
 
 input BookInput {

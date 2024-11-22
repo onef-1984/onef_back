@@ -1,14 +1,31 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { Field, InputType, ObjectType } from '@nestjs/graphql';
 import { IsNotEmpty, IsString } from 'class-validator';
+import { Report } from 'src/report/report.schema';
 
+@InputType()
 export class CreateEditorsPickDto {
   @IsNotEmpty()
   @IsString()
-  @ApiProperty({ description: '독후감 아이디' })
+  @Field()
   reportId: string;
 
   @IsNotEmpty()
   @IsString()
-  @ApiProperty({ description: '에디터스 픽 사유' })
+  @Field()
   description: string;
+}
+
+@ObjectType()
+export class EditorsPick {
+  @Field()
+  id: string;
+
+  @Field()
+  description: string;
+
+  @Field()
+  createdAt: string;
+
+  @Field()
+  report: Report;
 }

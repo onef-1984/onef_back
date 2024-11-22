@@ -1,5 +1,5 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { ChangeProfileDto } from 'src/auth/auth.dto';
+import { ChangeProfileInput } from 'src/auth/auth.dto';
 import { UserRepository } from './user.repository';
 import { genSalt, hash, compare } from 'bcryptjs';
 import { AuthRepository } from 'src/auth/auth.repository';
@@ -28,7 +28,7 @@ export class UserService {
     return newUser;
   }
 
-  async changeProfile(changeProfileDto: ChangeProfileDto, userId: string) {
+  async changeProfile(changeProfileDto: ChangeProfileInput, userId: string) {
     const user = await this.userRepository.changeProfile(
       changeProfileDto,
       userId,

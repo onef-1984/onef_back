@@ -1,10 +1,9 @@
 import { Module } from '@nestjs/common';
 import { EditorsPickService } from './editors-pick.service';
-import { EditorsPickController } from './editors-pick.controller';
+import { EditorsPickResolver } from './editors-pick.resolver';
 import { EditorsPickRepository } from './editors-pick.repository';
 
 @Module({
-  providers: [EditorsPickService, EditorsPickRepository],
-  controllers: [EditorsPickController],
+  providers: [EditorsPickService, EditorsPickResolver, EditorsPickRepository],
 })
 export class EditorsPickModule {}

@@ -1,10 +1,10 @@
 import {
-  ApiProperty,
-  ApiPropertyOptional,
   PartialType,
   OmitType,
   PickType,
-} from '@nestjs/swagger';
+  Field,
+  InputType,
+} from '@nestjs/graphql';
 import {
   IsEmail,
   IsNotEmpty,
@@ -13,50 +13,54 @@ import {
   IsUrl,
 } from 'class-validator';
 
-export class SignUpDto {
+@InputType()
+export class SignUpInput {
   @IsNotEmpty()
   @IsEmail()
-  @ApiProperty({ example: 'example@test.com' })
+  @Field()
   email: string;
 
   @IsNotEmpty()
   @IsString()
-  @ApiProperty({ example: 'password1234!' })
+  @Field()
   password: string;
 
   @IsNotEmpty()
   @IsString()
-  @ApiProperty({ example: 'nickname' })
+  @Field()
   nickname: string;
 
   @IsOptional()
   @IsUrl({}, { message: '올바른 URL을 입력해주세요.' })
-  @ApiPropertyOptional({ example: 'https://example.com' })
+  @Field({ nullable: true })
   profileImage?: string;
 
   @IsOptional()
   @IsString()
-  @ApiPropertyOptional({ example: '안녕하세요' })
+  @Field({ nullable: true })
   bio?: string;
 }
 
-export class SignInDto extends PickType(SignUpDto, [
+@InputType()
+export class SignInInput extends PickType(SignUpInput, [
   'email',
   'password',
 ] as const) {}
 
-export class ChangeProfileDto extends PartialType(
-  OmitType(SignUpDto, ['email', 'password'] as const),
+@InputType()
+export class ChangeProfileInput extends PartialType(
+  OmitType(SignUpInput, ['email', 'password'] as const),
 ) {}
 
-export class ChangePasswordDto {
+@InputType()
+export class ChangePasswordInput {
   @IsNotEmpty()
   @IsString()
-  @ApiProperty()
+  @Field()
   oldPassword: string;
 
   @IsNotEmpty()
   @IsString()
-  @ApiProperty()
+  @Field()
   newPassword: string;
 }

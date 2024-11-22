@@ -12,11 +12,9 @@ export class EditorsPickRepository {
       omit: { reportId: true },
       include: {
         report: {
-          select: {
-            id: true,
-            title: true,
-            book: { select: { cover: true } },
-            user: { select: { nickname: true } },
+          include: {
+            user: true,
+            book: true,
           },
         },
       },

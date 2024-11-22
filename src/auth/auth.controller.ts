@@ -10,7 +10,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { SignInDto, SignUpDto } from './auth.dto';
+import { SignInInput, SignUpInput } from './auth.dto';
 import { Response } from 'express';
 import { AuthGuard } from './auth.guard';
 import { AuthGuard as Auth } from '@nestjs/passport';
@@ -69,7 +69,7 @@ export class AuthController {
   @ApiCreatedResponse({
     description: '회원가입 성공',
   })
-  async signUp(@Body() signUpDto: SignUpDto, @Res() res: Response) {
+  async signUp(@Body() signUpDto: SignUpInput, @Res() res: Response) {
     const { accessToken, refreshToken } =
       await this.authService.signup(signUpDto);
 
@@ -84,7 +84,7 @@ export class AuthController {
   @ApiCreatedResponse({
     description: '로그인 성공',
   })
-  async signIn(@Body() signInDto: SignInDto, @Res() res: Response) {
+  async signIn(@Body() signInDto: SignInInput, @Res() res: Response) {
     const { accessToken, refreshToken } =
       await this.authService.signIn(signInDto);
 
