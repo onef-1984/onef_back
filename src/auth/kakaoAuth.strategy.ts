@@ -17,11 +17,13 @@ export class KakaoStrategy extends PassportStrategy(Strategy, 'kakao') {
     profile: Profile,
     done: VerifyCallback,
   ): Promise<void> {
-    const { id, username, _json } = profile;
+    const { id, _json } = profile;
+
     const socialLoginUserInfo = {
       id,
-      username,
+      nickname: _json.properties.nickname,
       email: _json.kakao_account.email,
+      profileImage: _json.properties.profile_image,
       accessToken,
       refreshToken,
     };

@@ -41,6 +41,7 @@ export class AuthController {
       email: req.user.email,
       password: 'OAuth',
       nickname,
+      profileImage: req.user.profileImage,
     };
     try {
       const { accessToken, refreshToken } = user
@@ -121,7 +122,7 @@ export class AuthController {
     @Req() req: { user: User & { username: string } },
     @Res() res: Response,
   ) {
-    this.commentOauthLogic(req.user.username, req, res, 'kakao');
+    this.commentOauthLogic(req.user.nickname, req, res, 'kakao');
   }
 
   @Delete('signout')
