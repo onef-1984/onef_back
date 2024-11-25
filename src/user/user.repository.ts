@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import { ChangeProfileDto } from 'src/auth/auth.dto';
+import { ChangeProfileInput } from 'src/auth/auth.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class UserRepository {
   constructor(private prisma: PrismaService) {}
 
-  async changeProfile(changeProfileDto: ChangeProfileDto, userId: string) {
+  async changeProfile(changeProfileDto: ChangeProfileInput, userId: string) {
     const newUser = await this.prisma.user.update({
       where: { id: userId },
       data: {
@@ -31,14 +31,12 @@ export class UserRepository {
   getUserByNickname(userNickname: string) {
     return this.prisma.user.findUnique({
       where: { nickname: userNickname },
-      omit: { password: true, createdAt: true, updatedAt: true },
     });
   }
 
   getUserByEmail(email: string) {
     return this.prisma.user.findUnique({
       where: { email },
-      omit: { password: true, createdAt: true, updatedAt: true },
     });
   }
 }

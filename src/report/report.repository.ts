@@ -1,17 +1,17 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import {
-  CreateReportDto,
-  SearchReportDto,
-  UpdateReportDto,
-} from './dto/request/report.dto';
+  ReportInput,
+  ReportUpdateInput,
+  SearchReportInput,
+} from './report.schema';
 
 @Injectable()
 export class ReportRepository {
   constructor(private prisma: PrismaService) {}
 
-  async createReport(createReportDto: CreateReportDto, email: string) {
-    const { isbn13, ...data } = createReportDto;
+  async createReport(reportInput: ReportInput, email: string) {
+    const { isbn13, ...data } = reportInput;
 
     const newReport = await this.prisma.report.create({
       data: {
@@ -27,7 +27,17 @@ export class ReportRepository {
           },
         },
       },
-      select: { id: true },
+      include: {
+        book: {
+          include: {
+            subInfo: true,
+          },
+        },
+        user: true,
+        _count: {
+          select: { userLiked: true },
+        },
+      },
     });
 
     return newReport;
@@ -40,26 +50,29 @@ export class ReportRepository {
   }
 
   async getReportListBySearch(
-    { orderBy, skip, take }: SearchReportDto,
+    { orderBy, skip, take }: SearchReportInput,
     where: any,
   ) {
     return await this.prisma.report.findMany({
       include: {
-        book: { select: { cover: true, title: true } },
-        user: { select: { id: true, nickname: true } },
+        book: {
+          include: {
+            subInfo: true,
+          },
+        },
+        user: true,
         _count: {
           select: { userLiked: true },
         },
       },
-      omit: { userId: true, isbn13: true, tags: true },
       orderBy:
         orderBy === 'createdAt'
           ? { createdAt: 'desc' }
           : {
               userLiked: { _count: 'desc' },
             },
-      skip: Number(skip),
-      take: Number(take),
+      skip,
+      take,
       where,
     });
   }
@@ -82,30 +95,22 @@ export class ReportRepository {
       },
       include: {
         book: {
-          include: { subInfo: { select: { itemPage: true } } },
-          omit: {
-            subInfoId: true,
-            categoryId: true,
-            priceStandard: true,
-            createdAt: true,
-            updatedAt: true,
+          include: {
+            subInfo: true,
           },
         },
-        user: {
-          select: { id: true, nickname: true },
-        },
+        user: true,
         _count: {
           select: { userLiked: true },
         },
       },
-      omit: { isbn13: true, userId: true },
     });
   }
 
-  async updateReport(updateReportDto: UpdateReportDto, reportId: string) {
+  async updateReport(reportUpdateInput: ReportUpdateInput, reportId: string) {
     return this.prisma.report.update({
       where: { id: reportId },
-      data: updateReportDto,
+      data: reportUpdateInput,
     });
   }
 

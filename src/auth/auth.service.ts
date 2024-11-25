@@ -1,5 +1,5 @@
 import { BadRequestException, Inject, Injectable } from '@nestjs/common';
-import { SignInDto, SignUpDto } from './auth.dto';
+import { SignInInput, SignUpInput } from './auth.dto';
 import { AuthRepository } from './auth.repository';
 import { genSalt, hash, compare } from 'bcryptjs';
 import { JwtService } from '@nestjs/jwt';
@@ -58,7 +58,7 @@ export class AuthService {
     return { accessToken, refreshToken };
   }
 
-  async signup(signUpDto: SignUpDto) {
+  async signup(signUpDto: SignUpInput) {
     const { password, email } = signUpDto;
     const user = await this.authRepository.findUserByEmail(email);
 
@@ -78,7 +78,7 @@ export class AuthService {
     return { accessToken, refreshToken };
   }
 
-  async signIn(signInDto: SignInDto) {
+  async signIn(signInDto: SignInInput) {
     const user = await this.authRepository.findUserByEmail(signInDto.email);
 
     if (user && (await compare(signInDto.password, user.password))) {

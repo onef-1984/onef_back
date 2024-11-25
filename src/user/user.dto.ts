@@ -1,26 +1,33 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { Field, ObjectType } from '@nestjs/graphql';
+import { registerEnumType } from '@nestjs/graphql';
 
-enum UserRole {
-  USER = 'USER',
+export enum UserRole {
   ADMIN = 'ADMIN',
+  USER = 'USER',
 }
 
-export class UserResponseDto {
-  @ApiProperty({ description: '아이디' })
+registerEnumType(UserRole, {
+  name: 'UserRole',
+  description: 'The roles of the user',
+});
+
+@ObjectType()
+export class User {
+  @Field()
   id: string;
 
-  @ApiProperty({ description: '역할', enum: UserRole })
-  role: string;
+  @Field(() => UserRole)
+  role: UserRole;
 
-  @ApiProperty({ description: '이메일' })
+  @Field()
   email: string;
 
-  @ApiProperty({ description: '닉네임' })
+  @Field()
   nickname: string;
 
-  @ApiProperty({ description: '프로필 이미지' })
-  profileImage: string;
+  @Field({ nullable: true })
+  profileImage?: string;
 
-  @ApiProperty({ description: '소개' })
-  bio: string;
+  @Field({ nullable: true })
+  bio?: string;
 }

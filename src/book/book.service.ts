@@ -1,29 +1,109 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { BookRepository } from './book.repository';
-import { CreateBookDto } from './book.dto';
+import { BookSearchInput, Book } from './book.schema';
 
 @Injectable()
 export class BookService {
   constructor(private bookRepository: BookRepository) {}
 
-  async createBook(createBookDto: CreateBookDto) {
-    const { subInfo, ...book } = createBookDto;
+  async createBook(bookInput: Book) {
+    // 이미 존재하는 책이라면 DB에서 찾아서 보내줌
+    const findBook = await this.bookRepository.getBookByIsbn(bookInput.isbn13);
 
-    const findBook = await this.bookRepository.findBookById(book.isbn13);
-
-    if (findBook) {
-      return { isbn13: book.isbn13 };
-    } else {
-      const { isbn13 } = await this.bookRepository.createBook(book, subInfo);
-      return { isbn13 };
-    }
+    if (findBook) return findBook;
+    else return await this.bookRepository.createBook(bookInput);
   }
 
-  async findBookById(bookId: string) {
-    const res = await this.bookRepository.findBookById(bookId);
+  // 상세 조회
+  async getBookByIsbn(isbn13: string) {
+    // 이미 존재하는 책이라면 DB에서 조줌해서 보내줌
+    const res = await this.bookRepository.getBookByIsbn(isbn13);
 
-    if (!res) throw new NotFoundException('존재하지 않는 책입니다');
+    if (res) return res;
 
-    return res;
+    // 존재하지 않는 책이라면 알라딘 API에서 조회해서 보내줌
+    const { item } = await this.bookRepository.getBookFromAladin(isbn13);
+    const {
+      isbn13: isbn,
+      title,
+      author,
+      description,
+      cover,
+      categoryId,
+      categoryName,
+      pubDate,
+      publisher,
+      priceStandard,
+      customerReviewRank,
+      subInfo,
+    } = item[0];
+
+    // 데이터 구조 변환
+    return {
+      isbn13: isbn,
+      title,
+      author,
+      description,
+      cover,
+      categoryId,
+      categoryName,
+      pubDate,
+      publisher,
+      priceStandard,
+      customerReviewRank,
+      subInfo: {
+        subTitle: subInfo.subTitle,
+        originalTitle: subInfo.originalTitle,
+        itemPage: subInfo.itemPage,
+        weight: subInfo.packing.weight,
+        sizeDepth: subInfo.packing.sizeDepth,
+        sizeHeight: subInfo.packing.sizeHeight,
+        sizeWidth: subInfo.packing.sizeWidth,
+      },
+    };
+  }
+
+  // 검색
+  async getBookListByKeyWord(bookSearchInput: BookSearchInput) {
+    const { totalResults, startIndex, itemsPerPage, item } =
+      await this.bookRepository.getBookListFromAladin(bookSearchInput);
+
+    // map을 통해 item에서 필요한 데이터만 추출
+    const items = item.map(
+      ({
+        isbn13,
+        title,
+        author,
+        pubDate,
+        description,
+        cover,
+        categoryId,
+        categoryName,
+        publisher,
+        customerReviewRank,
+        priceStandard,
+      }) => {
+        return {
+          isbn13,
+          title,
+          author,
+          pubDate,
+          description,
+          cover,
+          categoryId,
+          categoryName,
+          publisher,
+          priceStandard,
+          customerReviewRank,
+        };
+      },
+    );
+
+    const hasNext = totalResults > startIndex * itemsPerPage;
+
+    return {
+      hasNext,
+      items,
+    };
   }
 }

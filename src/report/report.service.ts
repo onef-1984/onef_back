@@ -1,24 +1,24 @@
 import { Injectable } from '@nestjs/common';
 import { ReportRepository } from './report.repository';
 import {
-  CreateReportDto,
-  SearchReportDto,
-  UpdateReportDto,
-} from './dto/request/report.dto';
+  ReportInput,
+  ReportUpdateInput,
+  SearchReportInput,
+} from './report.schema';
 
 @Injectable()
 export class ReportService {
   constructor(private reportRepository: ReportRepository) {}
 
-  createReport(createReportDto: CreateReportDto, email: string) {
-    return this.reportRepository.createReport(createReportDto, email);
+  createReport(reportInput: ReportInput, email: string) {
+    return this.reportRepository.createReport(reportInput, email);
   }
 
   getReport(reportId: string) {
     return this.reportRepository.findReportById(reportId);
   }
 
-  async getReportListBySearch(query: SearchReportDto) {
+  async getReportListBySearch(query: SearchReportInput) {
     function getWhere(searchType: string) {
       switch (searchType) {
         case 'report':
@@ -57,6 +57,7 @@ export class ReportService {
 
     const totalResults =
       await this.reportRepository.getReportListBySearch_Count(where);
+
     const items = await this.reportRepository.getReportListBySearch(
       query,
       where,
@@ -78,7 +79,7 @@ export class ReportService {
     return await this.reportRepository.deleteReport(reportId);
   }
 
-  async updateReport(updateReportDto: UpdateReportDto, reportId: string) {
-    return this.reportRepository.updateReport(updateReportDto, reportId);
+  async updateReport(reportUpdateInput: ReportUpdateInput, reportId: string) {
+    return this.reportRepository.updateReport(reportUpdateInput, reportId);
   }
 }

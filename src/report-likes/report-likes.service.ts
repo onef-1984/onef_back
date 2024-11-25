@@ -22,7 +22,7 @@ export class ReportLikesService {
     return await this.reportLikesRepository.deleteReportLike(reportId, userId);
   }
 
-  async getTopLikedReports() {
+  async getMostLikedReportList() {
     const oneWeekAgo = new Date();
     oneWeekAgo.setDate(oneWeekAgo.getDate() - 30);
 
