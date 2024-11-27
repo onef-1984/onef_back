@@ -32,7 +32,10 @@ import { keyConfig } from './config/key.config';
       path: '/api/graphql',
     }),
     ConfigModule.forRoot({
-      envFilePath: '.env',
+      envFilePath:
+        process.env.NODE_ENV === undefined
+          ? '.env.local'
+          : `.env.${process.env.NODE_ENV}`,
       isGlobal: true,
       load: [jwtConfig, awsConfig, baseConfig, keyConfig],
       validationSchema,

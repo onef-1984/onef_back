@@ -11,6 +11,7 @@ import {
   IsOptional,
   IsString,
   IsUrl,
+  MaxLength,
 } from 'class-validator';
 
 @InputType()
@@ -38,6 +39,7 @@ export class SignUpInput {
   @IsOptional()
   @IsString()
   @Field({ nullable: true })
+  @MaxLength(300, { message: '최대 300자까지 입력 가능합니다.' })
   bio?: string;
 }
 

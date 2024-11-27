@@ -1,8 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { Book, BookSearchInput } from './book.schema';
-import { GetBookList, Item } from './book.type';
-import { SubInfo } from '@prisma/client';
+import { AladinBook, GetBookList } from './book.type';
 
 @Injectable()
 export class BookRepository {
@@ -27,9 +26,7 @@ export class BookRepository {
     });
   }
 
-  async getBookFromAladin(
-    isbn13: string,
-  ): Promise<{ item: Item & { subInfo: { packing: SubInfo } } }> {
+  async getBookFromAladin(isbn13: string): Promise<AladinBook> {
     const result = await fetch(
       `http://www.aladin.co.kr/ttb/api/ItemLookUp.aspx?ttbkey=ttbwpfekdml1340001&itemIdType=ISBN&cover=big&ItemId=${isbn13}&output=js&Version=20131101&OptResult=packing`,
     );

@@ -17,7 +17,7 @@ export class BookResolver {
   }
 
   @Mutation(() => Book)
-  async createBook(@Args('bookInput') bookInput: Book) {
-    return this.bookService.createBook(bookInput);
+  async createBook(@Args('isbn13') isbn13: string) {
+    return this.bookService.createBook(isbn13);
   }
 }

@@ -9,7 +9,12 @@ import { Server, Socket } from 'socket.io';
 import * as dotenv from 'dotenv';
 
 // there is no other way to use process.env in the decorator
-dotenv.config();
+dotenv.config({
+  path:
+    process.env.NODE_ENV === undefined
+      ? '.env.local'
+      : `.env.${process.env.NODE_ENV}`,
+});
 
 const NAMESPACE = process.env.WS_NAMESPACE;
 const ORIGIN = process.env.WS_ORIGIN;

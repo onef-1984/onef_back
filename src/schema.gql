@@ -164,7 +164,7 @@ type Mutation {
   promotionUser(key: String!): Message!
   changeProfile(changeProfileInput: ChangeProfileInput!): Message!
   changePassword(changePasswordDto: ChangePasswordInput!): Message!
-  createBook(bookInput: BookInput!): BookObject!
+  createBook(isbn13: String!): BookObject!
   toggleReportLike(reportId: String!): Message!
   createEditorsPick(reportId: String!, description: String!): Message!
 }
@@ -191,19 +191,4 @@ input ChangeProfileInput {
 input ChangePasswordInput {
   oldPassword: String!
   newPassword: String!
-}
-
-input BookInput {
-  isbn13: String!
-  title: String!
-  author: String!
-  description: String!
-  cover: String!
-  categoryId: Int!
-  categoryName: String!
-  pubDate: String!
-  publisher: String!
-  priceStandard: Int!
-  customerReviewRank: Int!
-  subInfo: SubInfoInput!
 }

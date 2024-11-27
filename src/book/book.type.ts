@@ -1,3 +1,5 @@
+import { SubInfo } from '@prisma/client';
+
 export type GetBookList = {
   query: string;
   totalResults: number;
@@ -18,4 +20,14 @@ export type Item = {
   publisher: string;
   priceStandard: number;
   customerReviewRank: number;
+};
+
+export type AladinBook = {
+  item: Array<
+    Item & {
+      subInfo: Pick<SubInfo, 'subTitle' | 'originalTitle' | 'itemPage'> & {
+        packing: Omit<SubInfo, 'subTitle' | 'originalTitle' | 'itemPage'>;
+      };
+    }
+  >;
 };
