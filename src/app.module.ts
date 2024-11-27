@@ -21,6 +21,7 @@ import { NotificationModule } from './notification/notification.module';
 import { ApolloDriverConfig, ApolloDriver } from '@nestjs/apollo';
 import { GraphQLModule } from '@nestjs/graphql';
 import { join } from 'path';
+import { keyConfig } from './config/key.config';
 
 @Module({
   imports: [
@@ -33,7 +34,7 @@ import { join } from 'path';
     ConfigModule.forRoot({
       envFilePath: '.env',
       isGlobal: true,
-      load: [jwtConfig, awsConfig, baseConfig],
+      load: [jwtConfig, awsConfig, baseConfig, keyConfig],
       validationSchema,
     }),
     AuthModule,
