@@ -84,7 +84,7 @@ model ReportLike {
   reportId  String
   createdAt DateTime @default(now())
 
-  user   User   @relation(fields: [userId], references: [id], name: "User_BookReportLike")
+  user   User   @relation(fields: [userId], references: [id], name: "User_BookReportLike", onDelete: Cascade)
   report Report @relation(fields: [reportId], references: [id], name: "User_BookReportLike", onDelete: Cascade)
 
   @@id([userId, reportId])

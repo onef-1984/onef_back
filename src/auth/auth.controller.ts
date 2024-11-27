@@ -154,11 +154,12 @@ export class AuthController {
   @Delete('terminateUser/:userId')
   @UseGuards(AuthGuard)
   async terminateUser(
-    @Req() req: { user: User },
+    @Req() { user }: { user: User },
     @Param('userId') userId: string,
     @Body('key') key: string,
   ) {
-    if (req.user.id !== userId || req.user.role !== 'ADMIN') {
+    // 관리자 권한도 아니면서, 남의 아이디를 삭제하려 하면 권한이 없는거지
+    if (user.role !== 'ADMIN' && user.id !== userId) {
       throw new UnauthorizedException('권한이 없습니다.');
     }
 
@@ -166,9 +167,9 @@ export class AuthController {
       throw new UnauthorizedException('올바르지 않은 키입니다.');
     }
 
-    const user = await this.authService.terminateUserById(req.user.id);
+    const terminatedUser = await this.authService.terminateUserById(user.id);
 
-    if (user) {
+    if (terminatedUser) {
       return { message: '유저 삭제 성공' };
     } else {
       return { message: '유저 삭제 실패' };
