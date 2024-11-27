@@ -3,20 +3,25 @@ import { AuthService } from 'src/auth/auth.service';
 import { UserService } from './user.service';
 import {
   BadRequestException,
+  Inject,
   InternalServerErrorException,
   NotFoundException,
+  UnauthorizedException,
   UseGuards,
 } from '@nestjs/common';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { ChangePasswordInput, ChangeProfileInput } from 'src/auth/auth.dto';
 import { Message } from 'src/util/util.schema';
 import { User } from './user.dto';
+import { ConfigType } from '@nestjs/config';
+import { keyConfig } from 'src/config/key.config';
 
 @Resolver()
 export class UserResolver {
   constructor(
     private userService: UserService,
     private authService: AuthService,
+    @Inject(keyConfig.KEY) private key: ConfigType<typeof keyConfig>,
   ) {}
 
   @Query(() => User)
@@ -39,8 +44,13 @@ export class UserResolver {
   @Mutation(() => Message)
   @UseGuards(AuthGuard)
   async promotionUser(
+    @Args('key') key: string,
     @Context('req') { user: { id: userId } }: { user: User },
   ) {
+    if (key !== this.key.promotionKey) {
+      throw new UnauthorizedException('올바르지 않은 키입니다.');
+    }
+
     const newUser = await this.userService.promotionUser(userId);
 
     if (newUser) {

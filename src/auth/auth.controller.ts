@@ -25,6 +25,7 @@ import {
 import { ConfigType } from '@nestjs/config';
 import { baseConfig } from 'src/config/base.config';
 import { User } from '@prisma/client';
+import { keyConfig } from 'src/config/key.config';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -66,6 +67,7 @@ export class AuthController {
   constructor(
     private readonly authService: AuthService,
     @Inject(baseConfig.KEY) private base: ConfigType<typeof baseConfig>,
+    @Inject(keyConfig.KEY) private key: ConfigType<typeof keyConfig>,
   ) {}
 
   @Post('signup')
@@ -154,9 +156,14 @@ export class AuthController {
   async terminateUser(
     @Req() req: { user: User },
     @Param('userId') userId: string,
+    @Body('key') key: string,
   ) {
     if (req.user.id !== userId || req.user.role !== 'ADMIN') {
       throw new UnauthorizedException('권한이 없습니다.');
+    }
+
+    if (key !== this.key.terminateKey) {
+      throw new UnauthorizedException('올바르지 않은 키입니다.');
     }
 
     const user = await this.authService.terminateUserById(req.user.id);
