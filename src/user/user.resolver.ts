@@ -38,6 +38,20 @@ export class UserResolver {
 
   @Mutation(() => Message)
   @UseGuards(AuthGuard)
+  async promotionUser(
+    @Context('req') { user: { id: userId } }: { user: User },
+  ) {
+    const newUser = await this.userService.promotionUser(userId);
+
+    if (newUser) {
+      return { message: '유저 권한이 승급되었습니다' };
+    } else {
+      throw new InternalServerErrorException('유저 권한 승급에 실패했습니다');
+    }
+  }
+
+  @Mutation(() => Message)
+  @UseGuards(AuthGuard)
   async changeProfile(
     @Args('changeProfileInput') changeProfileInput: ChangeProfileInput,
     @Context('req') { user: { id: userId } }: { user: User },

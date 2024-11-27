@@ -6,26 +6,31 @@ import { PrismaService } from 'src/prisma/prisma.service';
 export class UserRepository {
   constructor(private prisma: PrismaService) {}
 
-  async changeProfile(changeProfileDto: ChangeProfileInput, userId: string) {
-    const newUser = await this.prisma.user.update({
+  changeProfile(changeProfileDto: ChangeProfileInput, userId: string) {
+    return this.prisma.user.update({
       where: { id: userId },
       data: {
         ...changeProfileDto,
       },
     });
-
-    return newUser;
   }
 
-  async changePassword(password: string, userId: string) {
-    const newUser = await this.prisma.user.update({
+  promotionUser(userId: string) {
+    return this.prisma.user.update({
+      where: { id: userId },
+      data: {
+        role: 'ADMIN',
+      },
+    });
+  }
+
+  changePassword(password: string, userId: string) {
+    return this.prisma.user.update({
       where: { id: userId },
       data: {
         password,
       },
     });
-
-    return newUser;
   }
 
   getUserByNickname(userNickname: string) {

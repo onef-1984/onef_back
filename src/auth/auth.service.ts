@@ -98,4 +98,8 @@ export class AuthService {
   getUserByEmail(email: string) {
     return this.authRepository.findUserByEmail(email);
   }
+
+  terminateUserById(id: string) {
+    return this.authRepository.terminateUserById(id);
+  }
 }

@@ -28,6 +28,10 @@ export class UserService {
     return newUser;
   }
 
+  promotionUser(userId: string) {
+    return this.userRepository.promotionUser(userId);
+  }
+
   async changeProfile(changeProfileDto: ChangeProfileInput, userId: string) {
     const user = await this.userRepository.changeProfile(
       changeProfileDto,

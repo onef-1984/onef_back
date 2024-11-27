@@ -28,4 +28,10 @@ export class AuthRepository {
       select: { id: true, email: true, nickname: true, password: true },
     });
   }
+
+  async terminateUserById(id: string) {
+    return await this.prisma.user.delete({
+      where: { id },
+    });
+  }
 }

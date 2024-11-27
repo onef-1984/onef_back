@@ -4,9 +4,11 @@ import {
   Delete,
   Get,
   Inject,
+  Param,
   Post,
   Req,
   Res,
+  UnauthorizedException,
   UseGuards,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
@@ -145,5 +147,24 @@ export class AuthController {
       .clearCookie('accessToken')
       .clearCookie('refreshToken')
       .send({ message: '로그아웃 성공' });
+  }
+
+  @Delete('terminateUser/:userId')
+  @UseGuards(AuthGuard)
+  async terminateUser(
+    @Req() req: { user: User },
+    @Param('userId') userId: string,
+  ) {
+    if (req.user.id !== userId || req.user.role !== 'ADMIN') {
+      throw new UnauthorizedException('권한이 없습니다.');
+    }
+
+    const user = await this.authService.terminateUserById(req.user.id);
+
+    if (user) {
+      return { message: '유저 삭제 성공' };
+    } else {
+      return { message: '유저 삭제 실패' };
+    }
   }
 }
