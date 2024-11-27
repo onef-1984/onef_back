@@ -161,7 +161,7 @@ type Mutation {
   createReport(reportInput: ReportInput!): Report!
   updateReport(reportUpdateInput: ReportUpdateInput!, reportId: String!): Report!
   deleteReport(reportId: String!): Report!
-  promotionUser: Message!
+  promotionUser(key: String!): Message!
   changeProfile(changeProfileInput: ChangeProfileInput!): Message!
   changePassword(changePasswordDto: ChangePasswordInput!): Message!
   createBook(bookInput: BookInput!): BookObject!
