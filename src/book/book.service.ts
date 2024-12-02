@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { BookRepository } from './book.repository';
 import { BookSearchInput, Book } from './book.schema';
 
@@ -23,6 +23,9 @@ export class BookService {
 
     // 존재하지 않는 책이라면 알라딘 API에서 조회해서 보내줌
     const { item } = await this.bookRepository.getBookFromAladin(isbn13);
+
+    if (!item) throw new NotFoundException('책을 찾을 수 없습니다.');
+
     const {
       isbn13: isbn,
       title,
