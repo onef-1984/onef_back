@@ -40,7 +40,12 @@ lerna-debug.log*
 .env.development
 .env.test
 .env.production
+<<<<<<< HEAD
 .env
+=======
+.env.local
+>>>>>>> a820d0e (change gitig)
+
 
 # temp directory
 .temp
