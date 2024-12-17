@@ -18,8 +18,6 @@ export class BookService {
     else {
       const newBook = await this.getBookByIsbn(isbn13);
 
-      console.log('newBook', newBook);
-
       return await this.bookRepository.createBook(newBook);
     }
   }
