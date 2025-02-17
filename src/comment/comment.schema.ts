@@ -21,10 +21,10 @@ export class Comment {
   @Field({ nullable: true })
   parentId?: string;
 
-  @Field(() => [Comment])
+  @Field(() => [Comment], { defaultValue: [] })
   replies: Comment[];
 
-  @Field(() => User)
+  @Field(() => User, { nullable: true })
   user: User;
 }
 

@@ -114,7 +114,7 @@ type Comment {
   reportId: String
   parentId: String
   replies: [Comment!]!
-  user: User!
+  user: User
 }
 
 type CommentList {
