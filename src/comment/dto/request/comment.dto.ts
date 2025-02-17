@@ -1,3 +1,4 @@
+import { Field, InputType } from '@nestjs/graphql';
 import { IntersectionType, PickType } from '@nestjs/swagger';
 import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
 
@@ -32,3 +33,21 @@ export class CreateCommentDto extends IntersectionType(
 export class PutCommentDto extends PickType(CreateCommentBodyDto, [
   'comment',
 ]) {}
+
+@InputType()
+export class CreateComment {
+  @IsString()
+  @IsNotEmpty()
+  @Field()
+  comment: string;
+
+  @IsNumber()
+  @IsNotEmpty()
+  @Field()
+  depth: number;
+
+  @IsString()
+  @IsNotEmpty()
+  @Field()
+  parentId: string;
+}

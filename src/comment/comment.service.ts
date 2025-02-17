@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { CommentRepository } from './comment.repository';
-import { CreateCommentDto, PutCommentDto } from './dto/request/comment.dto';
+import { CreateCommentDto } from './dto/request/comment.dto';
 
 @Injectable()
 export class CommentService {
@@ -14,8 +14,8 @@ export class CommentService {
     return this.commentRepository.createComment(createCommentDto);
   }
 
-  putComment(id: string, data: PutCommentDto) {
-    return this.commentRepository.putComment(id, data);
+  putComment(id: string, comment: string) {
+    return this.commentRepository.putComment(id, comment);
   }
 
   deleteComment(id: string) {

@@ -1,29 +1,17 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  InternalServerErrorException,
-  Param,
-  Post,
-  Put,
-  Req,
-  UseGuards,
-} from '@nestjs/common';
+import { Args, Resolver, Query, Mutation, Context } from '@nestjs/graphql';
 import { CommentService } from './comment.service';
-import { NotificationGateway } from 'src/notification/notification.gateway';
-import { User } from '@prisma/client';
-import {
-  CreateCommentBodyDto,
-  CreateCommentParamDto,
-  PutCommentDto,
-} from './dto/request/comment.dto';
+import { Comment, CommentList } from './comment.schema';
+import { Message } from 'src/util/util.schema';
+import { InternalServerErrorException, UseGuards } from '@nestjs/common';
 import { AuthGuard } from 'src/auth/auth.guard';
-import { ReportService } from 'src/report/report.service';
+import { NotificationGateway } from 'src/notification/notification.gateway';
 import { NotificationService } from 'src/notification/notification.service';
+import { ReportService } from 'src/report/report.service';
+import { User } from '@prisma/client';
+import { CreateComment } from './dto/request/comment.dto';
 
-@Controller('comments')
-export class CommentsController {
+@Resolver()
+export class CommentResolver {
   constructor(
     private reportService: ReportService,
     private commentService: CommentService,
@@ -31,25 +19,22 @@ export class CommentsController {
     private notificationGateway: NotificationGateway,
   ) {}
 
-  @Get(':parentId')
-  async getComments(@Param('parentId') parentId: string) {
+  @Query(() => CommentList)
+  async getComments(@Args('parentId') parentId: string) {
     const comments = await this.commentService.getComments(parentId);
 
     return { comments };
   }
 
-  @Post(':parentId')
+  @Mutation(() => Comment)
   @UseGuards(AuthGuard)
   async createComment(
-    @Param() param: CreateCommentParamDto,
-    @Body() body: CreateCommentBodyDto,
-    @Req() req,
+    @Args('createComment') createComment: CreateComment,
+    @Context('req')
+    { user: { id: userId } }: { user: User },
   ) {
-    const { id: userId } = req.user as User;
-
     const res = await this.commentService.createComment({
-      ...param,
-      ...body,
+      ...createComment,
       userId,
     });
 
@@ -57,9 +42,11 @@ export class CommentsController {
       throw new InternalServerErrorException('댓글을 작성하지 못했습니다.');
     }
 
-    if (body.depth === 0) {
-      this.sendNotification(param.parentId, userId);
+    if (createComment.depth === 0) {
+      this.sendNotification(createComment.parentId, userId);
     }
+
+    console.log(res);
 
     return res;
   }
@@ -84,16 +71,10 @@ export class CommentsController {
     }
   }
 
-  @Put(':parentId')
+  @Mutation(() => Message)
   @UseGuards(AuthGuard)
-  async putComment(
-    @Param('parentId') parentId: string,
-    @Body() body: PutCommentDto,
-    // @Req() req,
-  ) {
-    // const { id: userId } = req.user as User;
-
-    const res = await this.commentService.putComment(parentId, body);
+  async putComment(@Args('id') id: string, @Args('comment') comment: string) {
+    const res = await this.commentService.putComment(id, comment);
 
     if (!res) {
       throw new InternalServerErrorException('댓글을 수정하지 못했습니다.');
@@ -102,10 +83,10 @@ export class CommentsController {
     return { message: '댓글이 수정되었습니다.' };
   }
 
-  @Delete(':parentId')
+  @Mutation(() => Message)
   @UseGuards(AuthGuard)
-  async deleteComment(@Param('parentId') parentId: string) {
-    const res = await this.commentService.deleteComment(parentId);
+  async deleteComment(@Args('id') id: string) {
+    const res = await this.commentService.deleteComment(id);
 
     if (!res) {
       throw new InternalServerErrorException('댓글을 삭제하지 못했습니다.');

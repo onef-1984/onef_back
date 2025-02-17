@@ -106,6 +106,21 @@ type EditorsPick {
   report: Report!
 }
 
+type Comment {
+  id: String!
+  comment: String!
+  createdAt: String!
+  updatedAt: String!
+  reportId: String
+  parentId: String
+  replies: [Comment!]!
+  user: User!
+}
+
+type CommentList {
+  comments: [Comment!]!
+}
+
 input SubInfoInput {
   subTitle: String!
   originalTitle: String!
@@ -126,6 +141,7 @@ type Query {
   getMostLikedReportList: ReportList!
   checkUserLikedReport(reportId: String!): IsLiked!
   getEditorsPick: EditorsPick!
+  getComments(parentId: String!): CommentList!
 }
 
 input SearchReportInput {
@@ -167,6 +183,9 @@ type Mutation {
   createBook(isbn13: String!): BookObject!
   toggleReportLike(reportId: String!): Message!
   createEditorsPick(reportId: String!, description: String!): Message!
+  createComment(createComment: CreateComment!): Comment!
+  putComment(id: String!, comment: String!): Message!
+  deleteComment(id: String!): Message!
 }
 
 input ReportInput {
@@ -191,4 +210,10 @@ input ChangeProfileInput {
 input ChangePasswordInput {
   oldPassword: String!
   newPassword: String!
+}
+
+input CreateComment {
+  comment: String!
+  depth: Float!
+  parentId: String!
 }
